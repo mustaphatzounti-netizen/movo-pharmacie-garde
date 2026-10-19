@@ -1,9 +1,9 @@
 {
   "ville": "Agadir",
   "exemple": false,
-  "genere_le": "2026-10-19T02:24:47.084Z",
+  "genere_le": "2026-10-19T02:28:43.788Z",
   "fuseau": "Africa/Casablanca",
-  "heure_bascule": "09:00",
+  "heure_bascule": "00:00",
   "aujourdhui": "2026-10-19",
   "sources": [
     "https://agadir.pharmacieenpermanence.ma/",
