@@ -2,10 +2,11 @@
   "name": "movo-pharmacie-garde",
   "private": true,
   "type": "module",
-  "description": "Pharmacies de garde à Agadir : données, génération quotidienne et widget Blogger",
+  "description": "Pharmacies de garde à Agadir : récupération quotidienne et widget Blogger",
   "scripts": {
-    "build": "node scripts/build.mjs",
-    "test": "node --test scripts/*.test.mjs"
+    "scrape": "node scripts/scrape.mjs",
+    "test": "node --test scripts/scrape.test.mjs"
   },
+  "dependencies": { "cheerio": "1.0.0" },
   "engines": { "node": ">=20" }
 }
