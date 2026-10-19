@@ -24,9 +24,12 @@ test('addDays traverse les mois', () => {
 });
 
 test('avant l\'heure de bascule, on reste sur la garde de la veille', () => {
-  // Maroc = UTC+1 hors Ramadan : 07:30Z = 08:30 locale.
-  assert.equal(dateDeGarde(new Date('2026-10-20T07:30:00Z'), 'Africa/Casablanca', '09:00'), '2026-10-19');
-  assert.equal(dateDeGarde(new Date('2026-10-20T08:30:00Z'), 'Africa/Casablanca', '09:00'), '2026-10-20');
+  // Fuseaux sans changement d'heure, pour ne pas dépendre de la version de tzdata (le Maroc change d'offset).
+  assert.equal(dateDeGarde(new Date('2026-10-20T08:30:00Z'), 'UTC', '09:00'), '2026-10-19');
+  assert.equal(dateDeGarde(new Date('2026-10-20T09:00:00Z'), 'UTC', '09:00'), '2026-10-20');
+  // Tokyo = UTC+9 : 23:30Z le 19 = 08:30 le 20 à Tokyo.
+  assert.equal(dateDeGarde(new Date('2026-10-19T23:30:00Z'), 'Asia/Tokyo', '09:00'), '2026-10-19');
+  assert.equal(dateDeGarde(new Date('2026-10-20T00:30:00Z'), 'Asia/Tokyo', '09:00'), '2026-10-20');
 });
 
 test('validate détecte les erreurs', () => {

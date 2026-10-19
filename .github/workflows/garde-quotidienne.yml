@@ -2,8 +2,8 @@ name: Garde quotidienne
 
 on:
   schedule:
-    # 08:15 UTC = 09:15 heure du Maroc (UTC+1), juste après la bascule de 09:00.
-    - cron: '15 8 * * *'
+    # 09:15 UTC = 09:15 ou 10:15 au Maroc (UTC+0 pendant le Ramadan, UTC+1 sinon) : toujours après la bascule de 09:00.
+    - cron: '15 9 * * *'
   push:
     branches: [main]
     paths: ['data/**', 'scripts/**']
