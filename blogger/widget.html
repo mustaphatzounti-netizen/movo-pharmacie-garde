@@ -116,9 +116,7 @@
     racine.textContent = '';
     racine.appendChild(el('h2', 'pg-titre', 'Pharmacies de garde à ' + (data.ville || 'Agadir')));
     racine.appendChild(el('p', 'pg-titre-ar', 'صيدليات الحراسة بأكادير'));
-    racine.appendChild(el('p', 'pg-periode',
-      'Garde du ' + dateLisible(aujourdhui) + ' à ' + data.heure_bascule +
-      ' au ' + dateLisible(addDays(aujourdhui, 1)) + ' à ' + data.heure_bascule + '.'));
+    racine.appendChild(el('p', 'pg-periode', 'Garde du ' + dateLisible(aujourdhui) + '.'));
 
     if (data.exemple) {
       racine.appendChild(el('p', 'pg-alerte',
@@ -126,7 +124,13 @@
     }
 
     var liste = parDate[aujourdhui];
-    if (!liste || !liste.length) {
+    var hier = parDate[addDays(aujourdhui, -1)];
+    if ((!liste || !liste.length) && hier && hier.length) {
+      racine.appendChild(el('p', 'pg-alerte',
+        'La liste d\'aujourd\'hui n\'est pas encore publiée : voici la garde d\'hier (' + dateLisible(addDays(aujourdhui, -1)) +
+        '), souvent encore valable le matin. Appelez la pharmacie avant de vous déplacer.'));
+      listeParZone(hier, racine);
+    } else if (!liste || !liste.length) {
       racine.appendChild(el('p', 'pg-alerte',
         'La liste de garde d\'aujourd\'hui n\'est pas encore mise à jour. Vérifiez sur agadir.pharmacieenpermanence.ma ou appelez le 141 (SAMU) en cas d\'urgence.'));
     } else {
