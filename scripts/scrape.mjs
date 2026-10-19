@@ -131,11 +131,11 @@ async function main() {
   const jours = (ancien.exemple ? [] : ancien.jours || []).filter((j) => j.date < jour).slice(-2);
   jours.push({ date: jour, pharmacies });
   const avant = JSON.stringify((ancien.jours || []).find((j) => j.date === jour)?.pharmacies);
-  if (avant === JSON.stringify(pharmacies) && !ancien.exemple) { console.log('Déjà à jour.'); return; }
+  if (avant === JSON.stringify(pharmacies) && !ancien.exemple && ancien.heure_bascule === '00:00') { console.log('Déjà à jour.'); return; }
 
   const sortie = {
     ville: 'Agadir', exemple: false, genere_le: new Date().toISOString(), fuseau: FUSEAU,
-    heure_bascule: '09:00', aujourdhui: jour,
+    heure_bascule: '00:00', aujourdhui: jour,
     sources: [SOURCES.pep, SOURCES.ag], jours,
   };
   await mkdir(new URL('../public/', import.meta.url), { recursive: true });
