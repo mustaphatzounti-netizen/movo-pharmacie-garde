@@ -59,7 +59,7 @@ faux numéros). Le widget affiche un bandeau d'avertissement tant que ce drapeau
 
 ## Tâche quotidienne
 
-`.github/workflows/garde-quotidienne.yml` tourne tous les jours à 08:15 UTC (09:15 au Maroc), à
+`.github/workflows/garde-quotidienne.yml` tourne tous les jours à 09:15 UTC (09:15 ou 10:15 au Maroc), à
 chaque push sur `main` qui touche `data/` ou `scripts/`, et à la demande (onglet *Actions* →
 *Run workflow*). Il lance les tests, régénère `public/garde.json` et le commite.
 
