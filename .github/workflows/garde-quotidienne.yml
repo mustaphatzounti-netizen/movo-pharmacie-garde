@@ -1,0 +1,49 @@
+name: Garde quotidienne
+
+on:
+  schedule:
+    # 08:15 UTC = 09:15 heure du Maroc (UTC+1), juste après la bascule de 09:00.
+    - cron: '15 8 * * *'
+  push:
+    branches: [main]
+    paths: ['data/**', 'scripts/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: garde-quotidienne
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Tests
+        run: npm test
+
+      - name: Générer public/garde.json
+        id: build
+        run: npm run build
+
+      # On publie même si le planning du jour est vide (exit 2), pour que le widget affiche le bon état ;
+      # le run reste rouge et GitHub envoie un e-mail d'alerte.
+      - name: Commit et push
+        if: success() || steps.build.outcome == 'failure'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/garde.json
+          if git diff --cached --quiet; then
+            echo "Aucun changement."
+          else
+            git commit -m "garde: mise à jour du $(TZ=Africa/Casablanca date +%F)"
+            git push
+          fi
