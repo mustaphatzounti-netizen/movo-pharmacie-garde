@@ -1,7 +1,8 @@
 <!--
   Pharmacies de garde — Agadir : widget pour une page Blogger.
   Coller tout ce bloc dans la page, en mode « Vue HTML » (pas « Vue composition »).
-  Les données viennent de public/garde.json, régénéré chaque jour par GitHub Actions.
+  Les données viennent de public/garde.json, mis à jour chaque matin par GitHub Actions
+  à partir de pharmacieenpermanence.ma et annuaire-gratuit.ma (recoupés). Coller une seule fois.
 -->
 <div id="pg-garde" class="pg" lang="fr">
   <p class="pg-etat">Chargement des pharmacies de garde…</p>
@@ -23,6 +24,7 @@
   .pg-liste { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); padding: 0; margin: 0; list-style: none; }
   .pg-carte { background: var(--pg-carte); border-radius: 10px; padding: 12px 14px; }
   .pg-nom { margin: 0 0 4px; font-size: 1.05em; }
+  .pg-type { margin: -6px 0 10px; font-size: .85em; font-weight: 600; color: var(--pg-accent); }
   .pg-adr { margin: 0 0 10px; opacity: .75; font-size: .93em; }
   .pg-actions { display: flex; gap: 8px; flex-wrap: wrap; }
   .pg-btn { display: inline-block; padding: 7px 12px; border-radius: 6px; text-decoration: none !important; font-size: .93em; font-weight: 600; }
@@ -77,6 +79,7 @@
     var li = el('li', 'pg-carte');
     li.appendChild(el('h3', 'pg-nom', p.nom));
     li.appendChild(el('p', 'pg-adr', [p.quartier, p.adresse].filter(Boolean).join(' — ')));
+    if (p.garde) li.appendChild(el('p', 'pg-type', 'Garde ' + p.garde));
     var actions = el('div', 'pg-actions');
     if (p.telephone) {
       var tel = el('a', 'pg-btn pg-btn-tel', '📞 ' + p.telephone);
@@ -125,13 +128,13 @@
     var liste = parDate[aujourdhui];
     if (!liste || !liste.length) {
       racine.appendChild(el('p', 'pg-alerte',
-        'Le planning de garde pour cette date n\'est pas encore disponible. Appelez le 141 (SAMU) en cas d\'urgence.'));
+        'La liste de garde d\'aujourd\'hui n\'est pas encore mise à jour. Vérifiez sur agadir.pharmacieenpermanence.ma ou appelez le 141 (SAMU) en cas d\'urgence.'));
     } else {
       listeParZone(liste, racine);
     }
 
     var demain = parDate[addDays(aujourdhui, 1)];
-    if (demain && demain.length) {
+    if (false && demain && demain.length) {
       var det = el('details', 'pg-demain');
       det.appendChild(el('summary', null, 'Garde suivante (' + dateLisible(addDays(aujourdhui, 1)) + ')'));
       listeParZone(demain, det);
@@ -139,7 +142,7 @@
     }
 
     racine.appendChild(el('p', 'pg-maj',
-      'Mis à jour le ' + new Date(data.genere_le).toLocaleString('fr-FR', { timeZone: data.fuseau }) +
+      'D\'après Pharmacie en permanence et Annuaire Gratuit. Mis à jour le ' + new Date(data.genere_le).toLocaleString('fr-FR', { timeZone: data.fuseau }) +
       '. Appelez la pharmacie avant de vous déplacer.'));
     racine.appendChild(el('p', 'pg-urgence', 'Urgences : SAMU 141 · Protection civile 150 · Police 19'));
   }
