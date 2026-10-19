@@ -2,11 +2,12 @@ name: Garde quotidienne
 
 on:
   schedule:
-    # 09:15 UTC = 09:15 ou 10:15 au Maroc (UTC+0 pendant le Ramadan, UTC+1 sinon) : toujours après la bascule de 09:00.
-    - cron: '15 9 * * *'
+    # Toutes les heures de 00:20 à 13:20 UTC : la première exécution qui trouve la liste du jour
+    # sur les deux sites la publie, les suivantes ne changent rien.
+    - cron: '20 0-13 * * *'
   push:
     branches: [main]
-    paths: ['data/**', 'scripts/**']
+    paths: ['scripts/**', '.github/workflows/**']
   workflow_dispatch:
 
 permissions:
@@ -17,7 +18,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  garde:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,17 +27,16 @@ jobs:
         with:
           node-version: 22
 
+      - run: npm install --no-audit --no-fund
+
       - name: Tests
         run: npm test
 
-      - name: Générer public/garde.json
-        id: build
-        run: npm run build
+      - name: Récupérer la garde du jour
+        id: scrape
+        run: npm run scrape
 
-      # On publie même si le planning du jour est vide (exit 2), pour que le widget affiche le bon état ;
-      # le run reste rouge et GitHub envoie un e-mail d'alerte.
       - name: Commit et push
-        if: success() || steps.build.outcome == 'failure'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -45,5 +45,6 @@ jobs:
             echo "Aucun changement."
           else
             git commit -m "garde: mise à jour du $(TZ=Africa/Casablanca date +%F)"
+            git pull --rebase
             git push
           fi
