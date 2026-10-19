@@ -1,206 +1,114 @@
 {
   "ville": "Agadir",
-  "exemple": true,
-  "genere_le": "2026-10-19T02:08:25.213Z",
+  "exemple": false,
+  "genere_le": "2026-10-19T02:24:47.084Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "09:00",
-  "aujourdhui": "2026-10-18",
+  "aujourdhui": "2026-10-19",
+  "sources": [
+    "https://agadir.pharmacieenpermanence.ma/",
+    "https://www.annuaire-gratuit.ma/pharmacie-garde-agadir.html"
+  ],
   "jours": [
-    {
-      "date": "2026-10-17",
-      "pharmacies": [
-        {
-          "id": "p04",
-          "nom": "Pharmacie Exemple 04",
-          "zone": "Agadir Centre",
-          "quartier": "Les Amicales",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000004",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "p08",
-          "nom": "Pharmacie Exemple 08",
-          "zone": "Agadir Centre",
-          "quartier": "Anza",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000008",
-          "lat": null,
-          "lng": null
-        }
-      ]
-    },
-    {
-      "date": "2026-10-18",
-      "pharmacies": [
-        {
-          "id": "p04",
-          "nom": "Pharmacie Exemple 04",
-          "zone": "Agadir Centre",
-          "quartier": "Les Amicales",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000004",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "p08",
-          "nom": "Pharmacie Exemple 08",
-          "zone": "Agadir Centre",
-          "quartier": "Anza",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000008",
-          "lat": null,
-          "lng": null
-        }
-      ]
-    },
     {
       "date": "2026-10-19",
       "pharmacies": [
         {
-          "id": "p01",
-          "nom": "Pharmacie Exemple 01",
-          "zone": "Agadir Centre",
-          "quartier": "Talborjt",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000001",
+          "id": "20aout",
+          "nom": "Pharmacie 20 Aout",
+          "zone": "Agadir",
+          "quartier": "Lakhyam Erac Bouargane",
+          "adresse": "180 Bd Imam El Boukhari Erac Bouargane",
+          "telephone": "+212528233279",
+          "garde": "24h/24",
           "lat": null,
           "lng": null
         },
         {
-          "id": "p05",
-          "nom": "Pharmacie Exemple 05",
-          "zone": "Agadir Centre",
-          "quartier": "Hay Salam",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000005",
-          "lat": null,
-          "lng": null
-        }
-      ]
-    },
-    {
-      "date": "2026-10-20",
-      "pharmacies": [
-        {
-          "id": "p01",
-          "nom": "Pharmacie Exemple 01",
-          "zone": "Agadir Centre",
-          "quartier": "Talborjt",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000001",
+          "id": "alandaloussia",
+          "nom": "Pharmacie Al Andaloussia",
+          "zone": "Agadir",
+          "quartier": "Cité Salam",
+          "adresse": "Résidence Nasr-3 (Bicha) Près De Jet Sakan",
+          "telephone": "+212528292999",
+          "garde": "24h/24",
           "lat": null,
           "lng": null
         },
         {
-          "id": "p05",
-          "nom": "Pharmacie Exemple 05",
-          "zone": "Agadir Centre",
-          "quartier": "Hay Salam",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000005",
-          "lat": null,
-          "lng": null
-        }
-      ]
-    },
-    {
-      "date": "2026-10-21",
-      "pharmacies": [
-        {
-          "id": "p01",
-          "nom": "Pharmacie Exemple 01",
-          "zone": "Agadir Centre",
-          "quartier": "Talborjt",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000001",
+          "id": "anezi",
+          "nom": "Pharmacie Anezi",
+          "zone": "Agadir",
+          "quartier": "Q. Anezi",
+          "adresse": "10, Bd Mohammed V",
+          "telephone": "+212528820676",
+          "garde": "24h/24",
           "lat": null,
           "lng": null
         },
         {
-          "id": "p05",
-          "nom": "Pharmacie Exemple 05",
-          "zone": "Agadir Centre",
-          "quartier": "Hay Salam",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000005",
-          "lat": null,
-          "lng": null
-        }
-      ]
-    },
-    {
-      "date": "2026-10-22",
-      "pharmacies": [
-        {
-          "id": "p01",
-          "nom": "Pharmacie Exemple 01",
-          "zone": "Agadir Centre",
-          "quartier": "Talborjt",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000001",
+          "id": "boussaid",
+          "nom": "Pharmacie Boussaïd",
+          "zone": "Agadir",
+          "quartier": "Les Amicales Ihchech",
+          "adresse": "Hay Farha, Bd Hadj Lahbib, Bloc 14 N°1, Proche De L'école Kastalani",
+          "telephone": "+212528238636",
+          "garde": "24h/24",
           "lat": null,
           "lng": null
         },
         {
-          "id": "p05",
-          "nom": "Pharmacie Exemple 05",
-          "zone": "Agadir Centre",
-          "quartier": "Hay Salam",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000005",
-          "lat": null,
-          "lng": null
-        }
-      ]
-    },
-    {
-      "date": "2026-10-23",
-      "pharmacies": [
-        {
-          "id": "p01",
-          "nom": "Pharmacie Exemple 01",
-          "zone": "Agadir Centre",
-          "quartier": "Talborjt",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000001",
+          "id": "chifaalfarah",
+          "nom": "Pharmacie Chifa Al Farah",
+          "zone": "Agadir",
+          "quartier": "Ben Sergao",
+          "adresse": "Hay Bensergao, Hay el farah",
+          "telephone": "+212528280159",
+          "garde": "24h/24",
           "lat": null,
           "lng": null
         },
         {
-          "id": "p05",
-          "nom": "Pharmacie Exemple 05",
-          "zone": "Agadir Centre",
-          "quartier": "Hay Salam",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000005",
-          "lat": null,
-          "lng": null
-        }
-      ]
-    },
-    {
-      "date": "2026-10-24",
-      "pharmacies": [
-        {
-          "id": "p01",
-          "nom": "Pharmacie Exemple 01",
-          "zone": "Agadir Centre",
-          "quartier": "Talborjt",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000001",
+          "id": "delaposte",
+          "nom": "Pharmacie de la Poste",
+          "zone": "Agadir",
+          "quartier": "Centre Ville",
+          "adresse": "Pharmacie De La Poste, Bd Moukaouama En Face Du Jardin Lala Meryem",
+          "telephone": "+212528842315",
+          "garde": "24h/24",
           "lat": null,
           "lng": null
         },
         {
-          "id": "p05",
-          "nom": "Pharmacie Exemple 05",
-          "zone": "Agadir Centre",
-          "quartier": "Hay Salam",
-          "adresse": "Adresse à compléter",
-          "telephone": "+212528000005",
+          "id": "elmghari",
+          "nom": "Pharmacie El Mghari",
+          "zone": "Agadir",
+          "quartier": "Dakhla",
+          "adresse": "5, Bd Hassan 1er Imm. Alwifaq, Cité Dakhla",
+          "telephone": "+212528239764",
+          "garde": "24h/24",
+          "lat": null,
+          "lng": null
+        },
+        {
+          "id": "errahma",
+          "nom": "Pharmacie Errahma",
+          "zone": "Agadir",
+          "quartier": "Hay Mohammadi",
+          "adresse": "161, Hay Mohammadi, Près De L'école Des Handicaps",
+          "telephone": "+212528232333",
+          "garde": "24h/24",
+          "lat": null,
+          "lng": null
+        },
+        {
+          "id": "riadalhouda",
+          "nom": "Pharmacie Riad Alhouda",
+          "zone": "Agadir",
+          "quartier": "Salam Houda Bensergao",
+          "adresse": "Pharmacie Riad Alhouda, 1176, Hay Al Houda (mobile: 0528321774)",
+          "telephone": "+212661364061",
+          "garde": "24h/24",
           "lat": null,
           "lng": null
         }
