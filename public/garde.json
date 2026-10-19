@@ -1,0 +1,210 @@
+{
+  "ville": "Agadir",
+  "exemple": true,
+  "genere_le": "2026-10-19T02:04:36.374Z",
+  "fuseau": "Africa/Casablanca",
+  "heure_bascule": "09:00",
+  "aujourdhui": "2026-10-18",
+  "jours": [
+    {
+      "date": "2026-10-17",
+      "pharmacies": [
+        {
+          "id": "p04",
+          "nom": "Pharmacie Exemple 04",
+          "zone": "Agadir Centre",
+          "quartier": "Les Amicales",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000004",
+          "lat": null,
+          "lng": null
+        },
+        {
+          "id": "p08",
+          "nom": "Pharmacie Exemple 08",
+          "zone": "Agadir Centre",
+          "quartier": "Anza",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000008",
+          "lat": null,
+          "lng": null
+        }
+      ]
+    },
+    {
+      "date": "2026-10-18",
+      "pharmacies": [
+        {
+          "id": "p04",
+          "nom": "Pharmacie Exemple 04",
+          "zone": "Agadir Centre",
+          "quartier": "Les Amicales",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000004",
+          "lat": null,
+          "lng": null
+        },
+        {
+          "id": "p08",
+          "nom": "Pharmacie Exemple 08",
+          "zone": "Agadir Centre",
+          "quartier": "Anza",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000008",
+          "lat": null,
+          "lng": null
+        }
+      ]
+    },
+    {
+      "date": "2026-10-19",
+      "pharmacies": [
+        {
+          "id": "p01",
+          "nom": "Pharmacie Exemple 01",
+          "zone": "Agadir Centre",
+          "quartier": "Talborjt",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000001",
+          "lat": null,
+          "lng": null
+        },
+        {
+          "id": "p05",
+          "nom": "Pharmacie Exemple 05",
+          "zone": "Agadir Centre",
+          "quartier": "Hay Salam",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000005",
+          "lat": null,
+          "lng": null
+        }
+      ]
+    },
+    {
+      "date": "2026-10-20",
+      "pharmacies": [
+        {
+          "id": "p01",
+          "nom": "Pharmacie Exemple 01",
+          "zone": "Agadir Centre",
+          "quartier": "Talborjt",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000001",
+          "lat": null,
+          "lng": null
+        },
+        {
+          "id": "p05",
+          "nom": "Pharmacie Exemple 05",
+          "zone": "Agadir Centre",
+          "quartier": "Hay Salam",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000005",
+          "lat": null,
+          "lng": null
+        }
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "pharmacies": [
+        {
+          "id": "p01",
+          "nom": "Pharmacie Exemple 01",
+          "zone": "Agadir Centre",
+          "quartier": "Talborjt",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000001",
+          "lat": null,
+          "lng": null
+        },
+        {
+          "id": "p05",
+          "nom": "Pharmacie Exemple 05",
+          "zone": "Agadir Centre",
+          "quartier": "Hay Salam",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000005",
+          "lat": null,
+          "lng": null
+        }
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "pharmacies": [
+        {
+          "id": "p01",
+          "nom": "Pharmacie Exemple 01",
+          "zone": "Agadir Centre",
+          "quartier": "Talborjt",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000001",
+          "lat": null,
+          "lng": null
+        },
+        {
+          "id": "p05",
+          "nom": "Pharmacie Exemple 05",
+          "zone": "Agadir Centre",
+          "quartier": "Hay Salam",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000005",
+          "lat": null,
+          "lng": null
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "pharmacies": [
+        {
+          "id": "p01",
+          "nom": "Pharmacie Exemple 01",
+          "zone": "Agadir Centre",
+          "quartier": "Talborjt",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000001",
+          "lat": null,
+          "lng": null
+        },
+        {
+          "id": "p05",
+          "nom": "Pharmacie Exemple 05",
+          "zone": "Agadir Centre",
+          "quartier": "Hay Salam",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000005",
+          "lat": null,
+          "lng": null
+        }
+      ]
+    },
+    {
+      "date": "2026-10-24",
+      "pharmacies": [
+        {
+          "id": "p01",
+          "nom": "Pharmacie Exemple 01",
+          "zone": "Agadir Centre",
+          "quartier": "Talborjt",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000001",
+          "lat": null,
+          "lng": null
+        },
+        {
+          "id": "p05",
+          "nom": "Pharmacie Exemple 05",
+          "zone": "Agadir Centre",
+          "quartier": "Hay Salam",
+          "adresse": "Adresse à compléter",
+          "telephone": "+212528000005",
+          "lat": null,
+          "lng": null
+        }
+      ]
+    }
+  ]
+}

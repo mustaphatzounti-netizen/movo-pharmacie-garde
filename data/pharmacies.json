@@ -1,0 +1,14 @@
+{
+  "exemple": true,
+  "ville": "Agadir",
+  "pharmacies": [
+    { "id": "p01", "nom": "Pharmacie Exemple 01", "zone": "Agadir Centre", "quartier": "Talborjt", "adresse": "Adresse à compléter", "telephone": "+212528000001", "lat": null, "lng": null },
+    { "id": "p02", "nom": "Pharmacie Exemple 02", "zone": "Agadir Centre", "quartier": "Dakhla", "adresse": "Adresse à compléter", "telephone": "+212528000002", "lat": null, "lng": null },
+    { "id": "p03", "nom": "Pharmacie Exemple 03", "zone": "Agadir Centre", "quartier": "Hay Mohammadi", "adresse": "Adresse à compléter", "telephone": "+212528000003", "lat": null, "lng": null },
+    { "id": "p04", "nom": "Pharmacie Exemple 04", "zone": "Agadir Centre", "quartier": "Les Amicales", "adresse": "Adresse à compléter", "telephone": "+212528000004", "lat": null, "lng": null },
+    { "id": "p05", "nom": "Pharmacie Exemple 05", "zone": "Agadir Centre", "quartier": "Hay Salam", "adresse": "Adresse à compléter", "telephone": "+212528000005", "lat": null, "lng": null },
+    { "id": "p06", "nom": "Pharmacie Exemple 06", "zone": "Agadir Centre", "quartier": "Founty", "adresse": "Adresse à compléter", "telephone": "+212528000006", "lat": null, "lng": null },
+    { "id": "p07", "nom": "Pharmacie Exemple 07", "zone": "Agadir Centre", "quartier": "Tilila", "adresse": "Adresse à compléter", "telephone": "+212528000007", "lat": null, "lng": null },
+    { "id": "p08", "nom": "Pharmacie Exemple 08", "zone": "Agadir Centre", "quartier": "Anza", "adresse": "Adresse à compléter", "telephone": "+212528000008", "lat": null, "lng": null }
+  ]
+}
