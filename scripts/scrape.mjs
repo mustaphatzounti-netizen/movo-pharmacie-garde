@@ -1,9 +1,11 @@
-// Récupère la garde du jour à Agadir sur deux sources, les recoupe et met à jour public/garde.json.
-// Règle de sécurité : si une source n'affiche pas la date du jour, ou si les deux listes ne
-// contiennent pas exactement les mêmes pharmacies, rien n'est écrit et le script échoue.
+// Récupère la garde du jour à Agadir sur trois sources, les recoupe par vote majoritaire et met à
+// jour public/garde.json.
 //
-// Une troisième source (lematin.ma) sert de vérification supplémentaire, non bloquante : si elle
-// n'est pas d'accord, un avertissement est affiché dans les logs mais la publication continue.
+// Règle de sécurité : au moins deux sources doivent afficher la date du jour, sinon rien n'est
+// écrit. Parmi les sources qui confirment la date, une pharmacie n'est retenue que si au moins
+// deux d'entre elles la citent (ou toutes, s'il n'y en a que deux de disponibles ce jour-là) :
+// cela évite qu'une seule source en panne ou incomplète bloque toute la publication, tout en
+// gardant une vraie vérification croisée.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import * as cheerio from 'cheerio';
 
@@ -19,6 +21,7 @@ const MOIS = { janvier: 1, fevrier: 2, mars: 3, avril: 4, mai: 5, juin: 6, juill
 const sansAccents = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
 const propre = (s) => (s || '').replace(/\s+/g, ' ').trim().replace(/\s+,/g, ',');
 export const cle = (nom) => sansAccents(nom).toLowerCase().replace(/\bpharmacie\b/g, '').replace(/[^a-z0-9]/g, '');
+const titreAdresse = (s) => s.replace(/(^|[\s,(-])([a-zà-ÿ])/g, (m, a, b) => a + b.toUpperCase());
 
 export function dateFr(texte) {
   const m = sansAccents(texte).toLowerCase().match(/(\d{1,2})(?:er)?\s+([a-z]+)\s+(\d{4})/);
@@ -81,9 +84,8 @@ export function parseAg(html) {
   return { date, pharmacies };
 }
 
-// Vérification secondaire, non bloquante : lematin.ma ne donne ni téléphone ni quartier, et sa
-// date affichée est celle du site (bandeau du haut), pas forcément celle de la liste de garde —
-// on ne l'utilise donc que pour un recoupement des noms, jamais pour faire échouer le script.
+// Troisième source : lematin.ma ne donne ni téléphone ni quartier, seulement les noms — elle sert
+// uniquement au vote majoritaire (date + présence d'une pharmacie), jamais à fournir les détails.
 export function parseLematin(html) {
   const $ = cheerio.load(html);
   const date = dateFr(($('body').text().match(/[a-zéû]+\s+\d{1,2}\s+[a-zéû]+\s+\d{4}/i) || [])[0] || '');
@@ -93,58 +95,66 @@ export function parseLematin(html) {
   return { date, pharmacies };
 }
 
-const titreAdresse = (s) => s.replace(/(^|[\s,(-])([a-zà-ÿ])/g, (m, a, b) => a + b.toUpperCase());
-
-export function fusionner(principal, ag, jour) {
-  const erreurs = [];
-  if (principal.date !== jour) erreurs.push(`telecontact.ma affiche la date ${principal.date}, pas ${jour}`);
-  if (ag.date !== jour) erreurs.push(`annuaire-gratuit affiche la date ${ag.date}, pas ${jour}`);
-  if (!principal.pharmacies.length) erreurs.push('telecontact.ma : aucune pharmacie lue');
-  if (!ag.pharmacies.length) erreurs.push('annuaire-gratuit : aucune pharmacie lue');
-  const parAg = new Map(ag.pharmacies.map((p) => [cle(p.nom), p]));
-  const clesPrincipal = new Set(principal.pharmacies.map((p) => cle(p.nom)));
-  const absentesAg = principal.pharmacies.filter((p) => !parAg.has(cle(p.nom))).map((p) => p.nom);
-  const absentesPrincipal = ag.pharmacies.filter((p) => !clesPrincipal.has(cle(p.nom))).map((p) => p.nom);
-  if (absentesAg.length) erreurs.push('absentes d\'annuaire-gratuit : ' + absentesAg.join(', '));
-  if (absentesPrincipal.length) erreurs.push('absentes de telecontact.ma : ' + absentesPrincipal.join(', '));
-  if (erreurs.length) return { erreurs };
-
-  const pharmacies = principal.pharmacies.map((p) => {
-    const a = parAg.get(cle(p.nom));
-    const adresse = (p.adresse.length >= a.adresse.length ? p.adresse : titreAdresse(a.adresse));
-    const vingtQuatre = /24\s*h|jour et nuit/i.test(p.type + ' ' + a.garde);
-    return {
-      id: cle(p.nom),
-      nom: p.nom,
-      zone: 'Agadir',
-      quartier: a.quartier,
-      adresse,
-      telephone: p.telephone,
-      garde: vingtQuatre ? '24h/24' : (/nuit/i.test(p.type + a.garde) ? 'Nuit' : 'Jour'),
-      lat: p.lat ?? null,
-      lng: p.lng ?? null,
-    };
-  }).sort((x, y) => x.nom.localeCompare(y.nom, 'fr'));
-  return { erreurs, pharmacies };
+function construireRecord(nom, recs) {
+  const tc = recs.get('telecontact.ma');
+  const ag = recs.get('annuaire-gratuit');
+  const adresseTc = tc ? tc.adresse : '';
+  const adresseAg = ag ? titreAdresse(ag.adresse) : '';
+  const adresse = adresseTc.length >= adresseAg.length ? adresseTc : adresseAg;
+  const typeTxt = (tc ? tc.type : '') + ' ' + (ag ? ag.garde : '');
+  const vingtQuatre = /24\s*h|jour et nuit/i.test(typeTxt);
+  return {
+    id: cle(nom),
+    nom,
+    zone: 'Agadir',
+    quartier: ag ? ag.quartier : '',
+    adresse,
+    telephone: tc ? tc.telephone : null,
+    garde: vingtQuatre ? '24h/24' : (/nuit/i.test(typeTxt) ? 'Nuit' : 'Jour'),
+    lat: tc && tc.lat != null ? tc.lat : null,
+    lng: tc && tc.lng != null ? tc.lng : null,
+  };
 }
 
-// Recoupement non bloquant avec lematin.ma : ne renvoie que des avertissements, jamais d'erreurs.
-export function verifierLematin(lm, jour, pharmacies) {
-  const avertissements = [];
-  if (lm.date && lm.date !== jour) {
-    avertissements.push(`lematin.ma affiche la date ${lm.date}, pas ${jour} (vérification secondaire ignorée)`);
-    return avertissements;
+// Vote majoritaire sur plusieurs sources (2 ou 3). `sources` : [{ nom, data: { date, pharmacies } }].
+// Au moins 2 sources doivent confirmer la date du jour ; une pharmacie n'est retenue que si elle
+// est citée par au moins 2 des sources qui confirment la date (ou par les 2, s'il n'y en a que 2).
+export function fusionnerPlusieurs(sources, jour) {
+  const erreurs = [];
+  sources.forEach((s) => {
+    if (s.data.date !== jour) erreurs.push(`${s.nom} affiche la date ${s.data.date}, pas ${jour}`);
+    else if (!s.data.pharmacies.length) erreurs.push(`${s.nom} : aucune pharmacie lue`);
+  });
+  const valides = sources.filter((s) => s.data.date === jour && s.data.pharmacies.length);
+  if (valides.length < 2) {
+    erreurs.push(`seulement ${valides.length} source(s) confirment la date du jour (2 minimum requises)`);
+    return { erreurs };
   }
-  if (!lm.pharmacies.length) {
-    avertissements.push('lematin.ma : aucune pharmacie lue (vérification secondaire ignorée)');
-    return avertissements;
+
+  const comptes = new Map(); // cle -> { nom, count, recs: Map(sourceNom -> pharmacie) }
+  for (const s of valides) {
+    for (const p of s.data.pharmacies) {
+      const k = cle(p.nom);
+      if (!comptes.has(k)) comptes.set(k, { nom: p.nom, count: 0, recs: new Map() });
+      const e = comptes.get(k);
+      e.count++;
+      e.recs.set(s.nom, p);
+      if (!e.nomLong || p.nom.length > e.nomLong.length) e.nomLong = p.nom;
+    }
   }
-  const clesLm = new Set(lm.pharmacies.map((p) => cle(p.nom)));
-  const manquantes = pharmacies.filter((p) => !clesLm.has(cle(p.nom))).map((p) => p.nom);
-  if (manquantes.length) {
-    avertissements.push('absentes de lematin.ma (vérification secondaire, non bloquant) : ' + manquantes.join(', '));
+  const seuil = valides.length >= 3 ? 2 : valides.length;
+  const retenues = [...comptes.values()].filter((e) => e.count >= seuil);
+  const ecartees = [...comptes.values()].filter((e) => e.count < seuil).map((e) => `${e.nomLong} (${e.count}/${valides.length})`);
+  if (ecartees.length) erreurs.push(`écartées faute de confirmation croisée : ${ecartees.join(', ')}`);
+  if (!retenues.length) {
+    erreurs.push('aucune pharmacie confirmée par au moins deux sources');
+    return { erreurs };
   }
-  return avertissements;
+
+  const pharmacies = retenues
+    .map((e) => construireRecord(e.nomLong, e.recs))
+    .sort((x, y) => x.nom.localeCompare(y.nom, 'fr'));
+  return { erreurs: [], avertissements: erreurs, pharmacies };
 }
 
 async function telecharger(url) {
@@ -158,21 +168,22 @@ async function main() {
   const [tc, ag] = await Promise.all([telecharger(SOURCES.tc).then(parseTelecontact), telecharger(SOURCES.ag).then(parseAg)]);
   console.log(`telecontact.ma : ${tc.date}, ${tc.pharmacies.length} pharmacies`);
   console.log(`annuaire-gratuit : ${ag.date}, ${ag.pharmacies.length} pharmacies`);
-  const { erreurs, pharmacies } = fusionner(tc, ag, jour);
+
+  const sources = [{ nom: 'telecontact.ma', data: tc }, { nom: 'annuaire-gratuit', data: ag }];
+  try {
+    const lm = await telecharger(SOURCES.lm).then(parseLematin);
+    console.log(`lematin.ma : ${lm.date}, ${lm.pharmacies.length} pharmacies`);
+    sources.push({ nom: 'lematin.ma', data: lm });
+  } catch (e) {
+    console.log('::warning::lematin.ma injoignable, vote à 2 sources seulement : ' + e.message);
+  }
+
+  const { erreurs, avertissements, pharmacies } = fusionnerPlusieurs(sources, jour);
+  (avertissements || []).forEach((w) => console.log('::warning::' + w));
   if (erreurs.length) {
     erreurs.forEach((e) => console.log('::warning::' + e));
     console.log('Rien publié : la page garde la liste précédente et affichera un avertissement.');
     process.exit(3);
-  }
-
-  // Vérification secondaire non bloquante (lematin.ma) : une panne ou un désaccord ici ne doit
-  // jamais empêcher la publication déjà validée par les deux sources principales.
-  try {
-    const lm = await telecharger(SOURCES.lm).then(parseLematin);
-    console.log(`lematin.ma : ${lm.date}, ${lm.pharmacies.length} pharmacies (vérification secondaire)`);
-    verifierLematin(lm, jour, pharmacies).forEach((w) => console.log('::warning::' + w));
-  } catch (e) {
-    console.log('::warning::lematin.ma injoignable (vérification secondaire ignorée) : ' + e.message);
   }
 
   let ancien = { jours: [] };
