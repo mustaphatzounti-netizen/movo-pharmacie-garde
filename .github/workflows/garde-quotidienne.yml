@@ -36,6 +36,13 @@ jobs:
         id: scrape
         run: npm run scrape
 
+      - name: Publier la liste statique sur Blogger
+        env:
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+        run: node scripts/publish-to-blogger.mjs
+
       - name: Commit et push
         run: |
           git config user.name "github-actions[bot]"
