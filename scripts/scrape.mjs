@@ -1,12 +1,16 @@
 // Récupère la garde du jour à Agadir sur deux sources, les recoupe et met à jour public/garde.json.
 // Règle de sécurité : si une source n'affiche pas la date du jour, ou si les deux listes ne
 // contiennent pas exactement les mêmes pharmacies, rien n'est écrit et le script échoue.
+//
+// Une troisième source (lematin.ma) sert de vérification supplémentaire, non bloquante : si elle
+// n'est pas d'accord, un avertissement est affiché dans les logs mais la publication continue.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import * as cheerio from 'cheerio';
 
 export const SOURCES = {
-  pep: 'https://agadir.pharmacieenpermanence.ma/',
+  tc: 'https://www.telecontact.ma/pharmacie-de-garde-zone-jour/agadir/1/autre.html',
   ag: 'https://www.annuaire-gratuit.ma/pharmacie-garde-agadir.html',
+  lm: 'https://lematin.ma/pharmacie-garde/agadir/jour/agadir',
 };
 const FUSEAU = 'Africa/Casablanca';
 const SORTIE = new URL('../public/garde.json', import.meta.url);
@@ -34,18 +38,22 @@ function telephone(brut) {
   return '+212' + d;
 }
 
-export function parsePep(html) {
+// Source principale (remplace pharmacieenpermanence.ma, qui n'affichait plus la date du jour) :
+// nom, adresse, téléphone, type de garde et coordonnées GPS (tirées du lien Itinéraire).
+export function parseTelecontact(html) {
   const $ = cheerio.load(html);
-  const date = dateFr(($('body').text().match(/Mise à jour enregistrée le\s+([^\n<]{6,40})/) || [])[1] || '');
-  const pharmacies = $('article').map((_, a) => {
+  const date = dateFr(($('body').text().match(/Gardes du\s+([^\n<]{6,40})/) || [])[1] || '');
+  const pharmacies = $('article.pharma-carte').map((_, a) => {
     const $a = $(a);
-    const nom = propre($a.find('h3').first().text());
-    const tel = $a.find('a[href^="tel:"]').first().attr('href') || ($a.text().match(/0\d{3}(?:\s?\d{2}){3}/) || [])[0];
+    const dirHref = $a.find('.pharma-itineraire-menu a').first().attr('href') || '';
+    const coords = dirHref.match(/destination=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
     return {
-      nom,
-      adresse: propre($a.find('.line-clamp-2').first().text()),
-      telephone: telephone(tel),
-      type: propre($a.find('span').first().text()),
+      nom: propre($a.find('h3 a').first().text()),
+      adresse: propre($a.find('.pharma-adresse').first().text()),
+      telephone: telephone($a.find('a.pharma-appeler').first().attr('href')),
+      type: propre($a.find('.pharma-badge').first().text()),
+      lat: coords ? Number(coords[1]) : null,
+      lng: coords ? Number(coords[2]) : null,
     };
   }).get().filter((p) => p.nom);
   return { date, pharmacies };
@@ -73,23 +81,35 @@ export function parseAg(html) {
   return { date, pharmacies };
 }
 
+// Vérification secondaire, non bloquante : lematin.ma ne donne ni téléphone ni quartier, et sa
+// date affichée est celle du site (bandeau du haut), pas forcément celle de la liste de garde —
+// on ne l'utilise donc que pour un recoupement des noms, jamais pour faire échouer le script.
+export function parseLematin(html) {
+  const $ = cheerio.load(html);
+  const date = dateFr(($('body').text().match(/[a-zéû]+\s+\d{1,2}\s+[a-zéû]+\s+\d{4}/i) || [])[0] || '');
+  const pharmacies = $('.ph-record').map((_, el) => ({
+    nom: propre($(el).find('.ph-name').first().text()),
+  })).get().filter((p) => p.nom);
+  return { date, pharmacies };
+}
+
 const titreAdresse = (s) => s.replace(/(^|[\s,(-])([a-zà-ÿ])/g, (m, a, b) => a + b.toUpperCase());
 
-export function fusionner(pep, ag, jour) {
+export function fusionner(principal, ag, jour) {
   const erreurs = [];
-  if (pep.date !== jour) erreurs.push(`pharmacieenpermanence affiche la date ${pep.date}, pas ${jour}`);
+  if (principal.date !== jour) erreurs.push(`telecontact.ma affiche la date ${principal.date}, pas ${jour}`);
   if (ag.date !== jour) erreurs.push(`annuaire-gratuit affiche la date ${ag.date}, pas ${jour}`);
-  if (!pep.pharmacies.length) erreurs.push('pharmacieenpermanence : aucune pharmacie lue');
+  if (!principal.pharmacies.length) erreurs.push('telecontact.ma : aucune pharmacie lue');
   if (!ag.pharmacies.length) erreurs.push('annuaire-gratuit : aucune pharmacie lue');
   const parAg = new Map(ag.pharmacies.map((p) => [cle(p.nom), p]));
-  const clesPep = new Set(pep.pharmacies.map((p) => cle(p.nom)));
-  const absentesAg = pep.pharmacies.filter((p) => !parAg.has(cle(p.nom))).map((p) => p.nom);
-  const absentesPep = ag.pharmacies.filter((p) => !clesPep.has(cle(p.nom))).map((p) => p.nom);
+  const clesPrincipal = new Set(principal.pharmacies.map((p) => cle(p.nom)));
+  const absentesAg = principal.pharmacies.filter((p) => !parAg.has(cle(p.nom))).map((p) => p.nom);
+  const absentesPrincipal = ag.pharmacies.filter((p) => !clesPrincipal.has(cle(p.nom))).map((p) => p.nom);
   if (absentesAg.length) erreurs.push('absentes d\'annuaire-gratuit : ' + absentesAg.join(', '));
-  if (absentesPep.length) erreurs.push('absentes de pharmacieenpermanence : ' + absentesPep.join(', '));
+  if (absentesPrincipal.length) erreurs.push('absentes de telecontact.ma : ' + absentesPrincipal.join(', '));
   if (erreurs.length) return { erreurs };
 
-  const pharmacies = pep.pharmacies.map((p) => {
+  const pharmacies = principal.pharmacies.map((p) => {
     const a = parAg.get(cle(p.nom));
     const adresse = (p.adresse.length >= a.adresse.length ? p.adresse : titreAdresse(a.adresse));
     const vingtQuatre = /24\s*h|jour et nuit/i.test(p.type + ' ' + a.garde);
@@ -101,11 +121,30 @@ export function fusionner(pep, ag, jour) {
       adresse,
       telephone: p.telephone,
       garde: vingtQuatre ? '24h/24' : (/nuit/i.test(p.type + a.garde) ? 'Nuit' : 'Jour'),
-      lat: null,
-      lng: null,
+      lat: p.lat ?? null,
+      lng: p.lng ?? null,
     };
   }).sort((x, y) => x.nom.localeCompare(y.nom, 'fr'));
   return { erreurs, pharmacies };
+}
+
+// Recoupement non bloquant avec lematin.ma : ne renvoie que des avertissements, jamais d'erreurs.
+export function verifierLematin(lm, jour, pharmacies) {
+  const avertissements = [];
+  if (lm.date && lm.date !== jour) {
+    avertissements.push(`lematin.ma affiche la date ${lm.date}, pas ${jour} (vérification secondaire ignorée)`);
+    return avertissements;
+  }
+  if (!lm.pharmacies.length) {
+    avertissements.push('lematin.ma : aucune pharmacie lue (vérification secondaire ignorée)');
+    return avertissements;
+  }
+  const clesLm = new Set(lm.pharmacies.map((p) => cle(p.nom)));
+  const manquantes = pharmacies.filter((p) => !clesLm.has(cle(p.nom))).map((p) => p.nom);
+  if (manquantes.length) {
+    avertissements.push('absentes de lematin.ma (vérification secondaire, non bloquant) : ' + manquantes.join(', '));
+  }
+  return avertissements;
 }
 
 async function telecharger(url) {
@@ -116,14 +155,24 @@ async function telecharger(url) {
 
 async function main() {
   const jour = process.argv.includes('--date') ? process.argv[process.argv.indexOf('--date') + 1] : aujourdhui();
-  const [pep, ag] = await Promise.all([telecharger(SOURCES.pep).then(parsePep), telecharger(SOURCES.ag).then(parseAg)]);
-  console.log(`pharmacieenpermanence : ${pep.date}, ${pep.pharmacies.length} pharmacies`);
+  const [tc, ag] = await Promise.all([telecharger(SOURCES.tc).then(parseTelecontact), telecharger(SOURCES.ag).then(parseAg)]);
+  console.log(`telecontact.ma : ${tc.date}, ${tc.pharmacies.length} pharmacies`);
   console.log(`annuaire-gratuit : ${ag.date}, ${ag.pharmacies.length} pharmacies`);
-  const { erreurs, pharmacies } = fusionner(pep, ag, jour);
+  const { erreurs, pharmacies } = fusionner(tc, ag, jour);
   if (erreurs.length) {
     erreurs.forEach((e) => console.log('::warning::' + e));
     console.log('Rien publié : la page garde la liste précédente et affichera un avertissement.');
     process.exit(3);
+  }
+
+  // Vérification secondaire non bloquante (lematin.ma) : une panne ou un désaccord ici ne doit
+  // jamais empêcher la publication déjà validée par les deux sources principales.
+  try {
+    const lm = await telecharger(SOURCES.lm).then(parseLematin);
+    console.log(`lematin.ma : ${lm.date}, ${lm.pharmacies.length} pharmacies (vérification secondaire)`);
+    verifierLematin(lm, jour, pharmacies).forEach((w) => console.log('::warning::' + w));
+  } catch (e) {
+    console.log('::warning::lematin.ma injoignable (vérification secondaire ignorée) : ' + e.message);
   }
 
   let ancien = { jours: [] };
@@ -136,7 +185,7 @@ async function main() {
   const sortie = {
     ville: 'Agadir', exemple: false, genere_le: new Date().toISOString(), fuseau: FUSEAU,
     heure_bascule: '00:00', aujourdhui: jour,
-    sources: [SOURCES.pep, SOURCES.ag], jours,
+    sources: [SOURCES.tc, SOURCES.ag, SOURCES.lm], jours,
   };
   await mkdir(new URL('../public/', import.meta.url), { recursive: true });
   await writeFile(SORTIE, JSON.stringify(sortie, null, 2) + '\n');
