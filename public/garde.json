@@ -1,120 +1,16 @@
 {
   "ville": "Agadir",
   "exemple": false,
-  "genere_le": "2026-10-22T05:03:18.890Z",
+  "genere_le": "2026-10-23T05:03:13.543Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
-  "aujourdhui": "2026-10-22",
+  "aujourdhui": "2026-10-23",
   "sources": [
     "https://www.telecontact.ma/pharmacie-de-garde-zone-jour/agadir/1/autre.html",
     "https://www.annuaire-gratuit.ma/pharmacie-garde-agadir.html",
     "https://lematin.ma/pharmacie-garde/agadir/jour/agadir"
   ],
   "jours": [
-    {
-      "date": "2026-10-19",
-      "pharmacies": [
-        {
-          "id": "20aout",
-          "nom": "Pharmacie 20 Aout",
-          "zone": "Agadir",
-          "quartier": "Lakhyam Erac Bouargane",
-          "adresse": "180 Bd Imam El Boukhari Erac Bouargane",
-          "telephone": "+212528233279",
-          "garde": "24h/24",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "alandaloussia",
-          "nom": "Pharmacie Al Andaloussia",
-          "zone": "Agadir",
-          "quartier": "Cité Salam",
-          "adresse": "Résidence Nasr-3 (Bicha) Près De Jet Sakan",
-          "telephone": "+212528292999",
-          "garde": "24h/24",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "anezi",
-          "nom": "Pharmacie Anezi",
-          "zone": "Agadir",
-          "quartier": "Q. Anezi",
-          "adresse": "10, Bd Mohammed V",
-          "telephone": "+212528820676",
-          "garde": "24h/24",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "boussaid",
-          "nom": "Pharmacie Boussaïd",
-          "zone": "Agadir",
-          "quartier": "Les Amicales Ihchech",
-          "adresse": "Hay Farha, Bd Hadj Lahbib, Bloc 14 N°1, Proche De L'école Kastalani",
-          "telephone": "+212528238636",
-          "garde": "24h/24",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "chifaalfarah",
-          "nom": "Pharmacie Chifa Al Farah",
-          "zone": "Agadir",
-          "quartier": "Ben Sergao",
-          "adresse": "Hay Bensergao, Hay el farah",
-          "telephone": "+212528280159",
-          "garde": "24h/24",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "delaposte",
-          "nom": "Pharmacie de la Poste",
-          "zone": "Agadir",
-          "quartier": "Centre Ville",
-          "adresse": "Pharmacie De La Poste, Bd Moukaouama En Face Du Jardin Lala Meryem",
-          "telephone": "+212528842315",
-          "garde": "24h/24",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "elmghari",
-          "nom": "Pharmacie El Mghari",
-          "zone": "Agadir",
-          "quartier": "Dakhla",
-          "adresse": "5, Bd Hassan 1er Imm. Alwifaq, Cité Dakhla",
-          "telephone": "+212528239764",
-          "garde": "24h/24",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "errahma",
-          "nom": "Pharmacie Errahma",
-          "zone": "Agadir",
-          "quartier": "Hay Mohammadi",
-          "adresse": "161, Hay Mohammadi, Près De L'école Des Handicaps",
-          "telephone": "+212528232333",
-          "garde": "24h/24",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "riadalhouda",
-          "nom": "Pharmacie Riad Alhouda",
-          "zone": "Agadir",
-          "quartier": "Salam Houda Bensergao",
-          "adresse": "Pharmacie Riad Alhouda, 1176, Hay Al Houda (mobile: 0528321774)",
-          "telephone": "+212661364061",
-          "garde": "24h/24",
-          "lat": null,
-          "lng": null
-        }
-      ]
-    },
     {
       "date": "2026-10-21",
       "pharmacies": [
@@ -199,6 +95,88 @@
     },
     {
       "date": "2026-10-22",
+      "pharmacies": [
+        {
+          "id": "20aout",
+          "nom": "Pharmacie 20 Aout",
+          "zone": "Agadir",
+          "quartier": "Lakhyam Erac Bouargane",
+          "adresse": "180 bd Imam El Boukhari Erac Bouargane, Agadir",
+          "telephone": "+212528233279",
+          "garde": "24h/24",
+          "lat": 30.425983,
+          "lng": -9.5676
+        },
+        {
+          "id": "anezi",
+          "nom": "Pharmacie Anezi",
+          "zone": "Agadir",
+          "quartier": "Q. Anezi",
+          "adresse": "10 bd Mohammed V, Agadir",
+          "telephone": "+212528820676",
+          "garde": "24h/24",
+          "lat": 30.41695,
+          "lng": -9.599983
+        },
+        {
+          "id": "boussaid",
+          "nom": "Pharmacie Boussaïd",
+          "zone": "Agadir",
+          "quartier": "Les Amicales Ihchech",
+          "adresse": "Hay Farha, Bd Hadj Lahbib, Bloc 14 N°1, Proche De L'école Kastalani",
+          "telephone": "+212528238636",
+          "garde": "24h/24",
+          "lat": 30.426767,
+          "lng": -9.57755
+        },
+        {
+          "id": "chifaalfarah",
+          "nom": "Pharmacie Chifa Al Farah",
+          "zone": "Agadir",
+          "quartier": "Ben Sergao",
+          "adresse": "Hay Bensergao hay El Farah, Agadir",
+          "telephone": "+212528280159",
+          "garde": "24h/24",
+          "lat": 30.399632,
+          "lng": -9.560308
+        },
+        {
+          "id": "delaposte",
+          "nom": "Pharmacie de la Poste",
+          "zone": "Agadir",
+          "quartier": "Centre Ville",
+          "adresse": "Bd Moukaouama En Face Du Jardin Lala Meryem",
+          "telephone": "+212528842315",
+          "garde": "24h/24",
+          "lat": 30.413983,
+          "lng": -9.586267
+        },
+        {
+          "id": "elmghari",
+          "nom": "Pharmacie El Mghari",
+          "zone": "Agadir",
+          "quartier": "Dakhla",
+          "adresse": "5 bd Hassan 1er imm. AlWifaq cité Dakhla, Agadir",
+          "telephone": "+212528239764",
+          "garde": "24h/24",
+          "lat": 30.411983,
+          "lng": -9.564083
+        },
+        {
+          "id": "errahma",
+          "nom": "Pharmacie Errahma",
+          "zone": "Agadir",
+          "quartier": "Hay Mohammadi",
+          "adresse": "161, Hay Mohammadi, Près De L'école Des Handicaps",
+          "telephone": "+212528232333",
+          "garde": "24h/24",
+          "lat": 30.43655,
+          "lng": -9.5526
+        }
+      ]
+    },
+    {
+      "date": "2026-10-23",
       "pharmacies": [
         {
           "id": "20aout",
