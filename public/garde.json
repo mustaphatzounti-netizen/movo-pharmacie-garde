@@ -1,175 +1,16 @@
 {
   "ville": "Agadir",
   "exemple": false,
-  "genere_le": "2026-10-26T04:59:29.297Z",
+  "genere_le": "2026-10-27T05:16:47.029Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
-  "aujourdhui": "2026-10-26",
+  "aujourdhui": "2026-10-27",
   "sources": [
     "https://www.telecontact.ma/pharmacie-de-garde-zone-jour/agadir/1/autre.html",
     "https://www.annuaire-gratuit.ma/pharmacie-garde-agadir.html",
     "https://lematin.ma/pharmacie-garde/agadir/jour/agadir"
   ],
   "jours": [
-    {
-      "date": "2026-10-24",
-      "pharmacies": [
-        {
-          "id": "20aout",
-          "nom": "Pharmacie 20 Aout",
-          "zone": "Agadir",
-          "quartier": "",
-          "adresse": "180 bd Imam El Boukhari Erac Bouargane, Agadir",
-          "telephone": "+212528233279",
-          "garde": "24h/24",
-          "lat": 30.425983,
-          "lng": -9.5676
-        },
-        {
-          "id": "adam",
-          "nom": "Pharmacie Adam",
-          "zone": "Agadir",
-          "quartier": "Adrar Tilila",
-          "adresse": "701 z.i Tilila rue Mekka, Agadir",
-          "telephone": "+212528288080",
-          "garde": "24h/24",
-          "lat": 30.395541,
-          "lng": -9.511585
-        },
-        {
-          "id": "alhanane",
-          "nom": "Pharmacie Al Hanane",
-          "zone": "Agadir",
-          "quartier": "Taddart",
-          "adresse": "Ait Ouraht Anouar Souss villa Taddart, Agadir",
-          "telephone": "+212528235890",
-          "garde": "24h/24",
-          "lat": 30.432596,
-          "lng": -9.582886
-        },
-        {
-          "id": "anbary",
-          "nom": "Pharmacie Anbary",
-          "zone": "Agadir",
-          "quartier": "Agadir",
-          "adresse": "bd Hassan II imm. Hasna, Agadir",
-          "telephone": "+212528845592",
-          "garde": "24h/24",
-          "lat": 30.4235,
-          "lng": -9.605233
-        },
-        {
-          "id": "assafa",
-          "nom": "Pharmacie Assafa",
-          "zone": "Agadir",
-          "quartier": "Hay Mohammadi",
-          "adresse": "A Coté Du Café Kenya",
-          "telephone": null,
-          "garde": "24h/24",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "attawhid",
-          "nom": "Pharmacie Attawhid",
-          "zone": "Agadir",
-          "quartier": "Al Houda Et Salam",
-          "adresse": "348 X hay Al Houda sect. E, Agadir",
-          "telephone": "+212528320002",
-          "garde": "24h/24",
-          "lat": 30.394917,
-          "lng": -9.5379
-        },
-        {
-          "id": "boussaid",
-          "nom": "Pharmacie Boussaïd",
-          "zone": "Agadir",
-          "quartier": "",
-          "adresse": "hay Farha bd Hadj Lahbib bloc 14 n°1, Agadir",
-          "telephone": "+212528238636",
-          "garde": "24h/24",
-          "lat": 30.426767,
-          "lng": -9.57755
-        },
-        {
-          "id": "boutasra",
-          "nom": "Pharmacie Boutasra",
-          "zone": "Agadir",
-          "quartier": "Ben Sergao",
-          "adresse": "394 J hay Al Wifaq Ben Sergao, Agadir",
-          "telephone": "+212528280079",
-          "garde": "24h/24",
-          "lat": 30.3958,
-          "lng": -9.573783
-        },
-        {
-          "id": "elalami",
-          "nom": "Pharmacie El Alami",
-          "zone": "Agadir",
-          "quartier": "Al Massira Extension Dakhla",
-          "adresse": "quartier Riad Salam imm. Aferni n°22, Agadir",
-          "telephone": "+212528232957",
-          "garde": "24h/24",
-          "lat": 30.406817,
-          "lng": -9.574217
-        },
-        {
-          "id": "elmghari",
-          "nom": "Pharmacie El Mghari",
-          "zone": "Agadir",
-          "quartier": "",
-          "adresse": "5 bd Hassan 1er imm. AlWifaq cité Dakhla, Agadir",
-          "telephone": "+212528239764",
-          "garde": "24h/24",
-          "lat": 30.411983,
-          "lng": -9.564083
-        },
-        {
-          "id": "ennajd",
-          "nom": "Pharmacie Ennajd",
-          "zone": "Agadir",
-          "quartier": "Citél Dakhla",
-          "adresse": "Bd Hassan 1er, 11 Bloc G4 Cité Dakhla, En Face Sgmb Agence Dakhla",
-          "telephone": "+212528226907",
-          "garde": "24h/24",
-          "lat": 30.407667,
-          "lng": -9.556117
-        },
-        {
-          "id": "errahma",
-          "nom": "Pharmacie Errahma",
-          "zone": "Agadir",
-          "quartier": "",
-          "adresse": "161 rue Sidi Kacem Hay Mohammadi, Agadir",
-          "telephone": "+212528232333",
-          "garde": "24h/24",
-          "lat": 30.43655,
-          "lng": -9.5526
-        },
-        {
-          "id": "hadrane",
-          "nom": "Pharmacie Hadrane",
-          "zone": "Agadir",
-          "quartier": "Lakhyam Erac Bouargane",
-          "adresse": "2 Bis, Rue Ibn Al Arabi, A Coté De La Mosquée Lagouira, Près De L'école Fikri, Cité Lagouira",
-          "telephone": "+212528231012",
-          "garde": "24h/24",
-          "lat": 30.422133,
-          "lng": -9.576317
-        },
-        {
-          "id": "ibnzouhr",
-          "nom": "Pharmacie Ibn Zouhr",
-          "zone": "Agadir",
-          "quartier": "Salam Houda Bensergao",
-          "adresse": "229, Type O, Rue Aglou, Cité Essalam",
-          "telephone": "+212528235451",
-          "garde": "24h/24",
-          "lat": 30.3964,
-          "lng": -9.549817
-        }
-      ]
-    },
     {
       "date": "2026-10-25",
       "pharmacies": [
@@ -287,6 +128,121 @@
     },
     {
       "date": "2026-10-26",
+      "pharmacies": [
+        {
+          "id": "adam",
+          "nom": "Pharmacie Adam",
+          "zone": "Agadir",
+          "quartier": "Adrar Tilila",
+          "adresse": "701 z.i Tilila rue Mekka, Agadir",
+          "telephone": "+212528288080",
+          "garde": "24h/24",
+          "lat": 30.395541,
+          "lng": -9.511585
+        },
+        {
+          "id": "alhanane",
+          "nom": "Pharmacie Al Hanane",
+          "zone": "Agadir",
+          "quartier": "Taddart",
+          "adresse": "Ait Ouraht Anouar Souss villa Taddart, Agadir",
+          "telephone": "+212528235890",
+          "garde": "24h/24",
+          "lat": 30.432596,
+          "lng": -9.582886
+        },
+        {
+          "id": "anbary",
+          "nom": "Pharmacie Anbary",
+          "zone": "Agadir",
+          "quartier": "Agadir",
+          "adresse": "bd Hassan II imm. Hasna, Agadir",
+          "telephone": "+212528845592",
+          "garde": "24h/24",
+          "lat": 30.4235,
+          "lng": -9.605233
+        },
+        {
+          "id": "assafa",
+          "nom": "Pharmacie Assafa",
+          "zone": "Agadir",
+          "quartier": "Hay Mohammadi",
+          "adresse": "A Coté Du Café Kenya",
+          "telephone": null,
+          "garde": "24h/24",
+          "lat": null,
+          "lng": null
+        },
+        {
+          "id": "attawhid",
+          "nom": "Pharmacie Attawhid",
+          "zone": "Agadir",
+          "quartier": "Al Houda Et Salam",
+          "adresse": "348 X hay Al Houda sect. E, Agadir",
+          "telephone": "+212528320002",
+          "garde": "24h/24",
+          "lat": 30.394917,
+          "lng": -9.5379
+        },
+        {
+          "id": "boutasra",
+          "nom": "Pharmacie Boutasra",
+          "zone": "Agadir",
+          "quartier": "Ben Sergao",
+          "adresse": "394 J hay Al Wifaq Ben Sergao, Agadir",
+          "telephone": "+212528280079",
+          "garde": "24h/24",
+          "lat": 30.3958,
+          "lng": -9.573783
+        },
+        {
+          "id": "elalami",
+          "nom": "Pharmacie El Alami",
+          "zone": "Agadir",
+          "quartier": "Al Massira Extension Dakhla",
+          "adresse": "quartier Riad Salam imm. Aferni n°22, Agadir",
+          "telephone": "+212528232957",
+          "garde": "24h/24",
+          "lat": 30.406817,
+          "lng": -9.574217
+        },
+        {
+          "id": "ennajd",
+          "nom": "Pharmacie Ennajd",
+          "zone": "Agadir",
+          "quartier": "Citél Dakhla",
+          "adresse": "Bd Hassan 1er, 11 Bloc G4 Cité Dakhla, En Face Sgmb Agence Dakhla",
+          "telephone": "+212528226907",
+          "garde": "24h/24",
+          "lat": 30.407667,
+          "lng": -9.556117
+        },
+        {
+          "id": "hadrane",
+          "nom": "Pharmacie Hadrane",
+          "zone": "Agadir",
+          "quartier": "Lakhyam Erac Bouargane",
+          "adresse": "2 Bis, Rue Ibn Al Arabi, A Coté De La Mosquée Lagouira, Près De L'école Fikri, Cité Lagouira",
+          "telephone": "+212528231012",
+          "garde": "24h/24",
+          "lat": 30.422133,
+          "lng": -9.576317
+        },
+        {
+          "id": "ibnzouhr",
+          "nom": "Pharmacie Ibn Zouhr",
+          "zone": "Agadir",
+          "quartier": "Salam Houda Bensergao",
+          "adresse": "229, Type O, Rue Aglou, Cité Essalam",
+          "telephone": "+212528235451",
+          "garde": "24h/24",
+          "lat": 30.3964,
+          "lng": -9.549817
+        }
+      ]
+    },
+    {
+      "date": "2026-10-27",
       "pharmacies": [
         {
           "id": "adam",
