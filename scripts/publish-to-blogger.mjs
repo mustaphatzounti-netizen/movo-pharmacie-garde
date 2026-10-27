@@ -193,10 +193,14 @@ async function main() {
     return;
   }
 
+  // PATCH (not PUT): a PUT replaces the whole page resource, so sending only
+  // `content` wiped the page title (Google then showed "MOVO" as title and H1).
+  // The title is also sent explicitly, with a fallback, so it can never be emptied.
+  const PAGE_TITLE = "Pharmacie de garde Agadir aujourd'hui (24h/24) — liste du jour | MOVO";
   const patchRes = await fetch(api, {
-    method: 'PUT',
+    method: 'PATCH',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content: newHtml }),
+    body: JSON.stringify({ title: (page.title && page.title.trim()) || PAGE_TITLE, content: newHtml }),
   });
   if (!patchRes.ok) throw new Error(`PATCH page failed (${patchRes.status}): ${await patchRes.text()}`);
 
