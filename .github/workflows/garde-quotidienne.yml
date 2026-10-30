@@ -38,6 +38,7 @@ jobs:
         run: npm run scrape
 
       - name: Publier la liste statique sur Blogger
+        continue-on-error: true
         env:
           BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
           BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
