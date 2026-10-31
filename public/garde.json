@@ -1,7 +1,7 @@
 {
   "ville": "Agadir",
   "exemple": false,
-  "genere_le": "2026-10-31T05:56:48.540Z",
+  "genere_le": "2026-10-31T17:49:16.700Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
   "aujourdhui": "2026-10-31",
@@ -245,19 +245,19 @@
       "date": "2026-10-31",
       "pharmacies": [
         {
-          "id": "adam",
-          "nom": "Pharmacie Adam",
+          "id": "agdal",
+          "nom": "Pharmacie Agdal",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "701 z.i Tilila rue Mekka, Agadir",
-          "telephone": "+212528288080",
+          "adresse": "z.i Tilila rue Ghaza imm. Agdal n°47, Agadir",
+          "telephone": "+212528285520",
           "garde": "24h/24",
-          "lat": 30.395541,
-          "lng": -9.511585
+          "lat": 30.40124,
+          "lng": -9.518777
         },
         {
           "id": "alhanane",
-          "nom": "Pharmacie Al Hanane",
+          "nom": "Pharmacie AL HANANE",
           "zone": "Agadir",
           "quartier": "",
           "adresse": "Ait Ouraht Anouar Souss villa Taddart, Agadir",
@@ -271,7 +271,7 @@
           "nom": "Pharmacie Al Imam AlKastalani",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "bd Abdallah Ben Yacine bloc 13 n° 17 cité Sidi Mohamed, Agadir",
+          "adresse": "Bd Abdallah Ben Yacine, Bloc 13 N° 17 Cité Sidi Mohamed, Près De L'école Kastalani",
           "telephone": "+212528224258",
           "garde": "24h/24",
           "lat": 30.426283,
@@ -282,66 +282,22 @@
           "nom": "Pharmacie Amsernat",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "bd Deux Mars q. Amsernat, Agadir",
+          "adresse": "Bd Deux Mars, Q. Amsernat, Près Du Souk Al Had",
           "telephone": "+212528239804",
           "garde": "24h/24",
           "lat": 30.415233,
           "lng": -9.578733
         },
         {
-          "id": "anbary",
-          "nom": "Pharmacie Anbary",
-          "zone": "Agadir",
-          "quartier": "",
-          "adresse": "bd Hassan II imm. Hasna, Agadir",
-          "telephone": "+212528845592",
-          "garde": "24h/24",
-          "lat": 30.4235,
-          "lng": -9.605233
-        },
-        {
-          "id": "assafa",
-          "nom": "Pharmacie Assafa",
-          "zone": "Agadir",
-          "quartier": "",
-          "adresse": "A Coté Du Café Kenya",
-          "telephone": null,
-          "garde": "Jour",
-          "lat": null,
-          "lng": null
-        },
-        {
-          "id": "attawhid",
-          "nom": "Pharmacie Attawhid",
-          "zone": "Agadir",
-          "quartier": "",
-          "adresse": "348 X hay Al Houda sect. E, Agadir",
-          "telephone": "+212528320002",
-          "garde": "24h/24",
-          "lat": 30.394917,
-          "lng": -9.5379
-        },
-        {
           "id": "avallalfassi",
           "nom": "Pharmacie av. Allal Fassi",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "23 bd Allal El Fassi Erac Bouargane, Agadir",
+          "adresse": "23, Bd Allal El Fassi, Erac Bouargane, Près De Lycée Zerktouni",
           "telephone": "+212528229245",
           "garde": "24h/24",
           "lat": 30.42185,
           "lng": -9.564533
-        },
-        {
-          "id": "boutasra",
-          "nom": "Pharmacie Boutasra",
-          "zone": "Agadir",
-          "quartier": "",
-          "adresse": "394 J hay Al Wifaq Ben Sergao, Agadir",
-          "telephone": "+212528280079",
-          "garde": "24h/24",
-          "lat": 30.3958,
-          "lng": -9.573783
         },
         {
           "id": "elalami",
@@ -355,11 +311,22 @@
           "lng": -9.574217
         },
         {
+          "id": "elqods",
+          "nom": "Pharmacie El Qods",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "69, Rue Imam Chafii, Bloc A5, Près De Hamam Qods",
+          "telephone": "+212540011928",
+          "garde": "24h/24",
+          "lat": 30.414,
+          "lng": -9.555283
+        },
+        {
           "id": "ennajd",
           "nom": "Pharmacie Ennajd",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "Bd Hassan 1er, 11 Bloc G4 Cité Dakhla, En Face Sgmb Agence Dakhla",
+          "adresse": "bd Hassan 1er 11 bloc G4 cité Dakhla, Agadir",
           "telephone": "+212528226907",
           "garde": "24h/24",
           "lat": 30.407667,
@@ -381,33 +348,44 @@
           "nom": "Pharmacie Hadrane",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "2 Bis, Rue Ibn Al Arabi, A Coté De La Mosquée Lagouira, Près De L'école Fikri, Cité Lagouira",
+          "adresse": "2 X rue Ibn Al Arabi z.i., Agadir",
           "telephone": "+212528231012",
           "garde": "24h/24",
           "lat": 30.422133,
           "lng": -9.576317
         },
         {
-          "id": "ibnzouhr",
-          "nom": "Pharmacie Ibn Zouhr",
+          "id": "jetsakane",
+          "nom": "Pharmacie Jet Sakane",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "229, Type O, Rue Aglou, Cité Essalam",
-          "telephone": "+212528235451",
+          "adresse": "Hay Bensergao Jet Sakane M1 imm. n°42 Salam Houda, Agadir",
+          "telephone": "+212528322064",
           "garde": "24h/24",
-          "lat": 30.3964,
-          "lng": -9.549817
+          "lat": 30.399139,
+          "lng": -9.552138
         },
         {
           "id": "kettane",
           "nom": "Pharmacie Kettane",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "hay Mohammadi résid. Assabah, Agadir",
+          "adresse": "2 Lotiss. Saâda Gh.9 Doha (Mobile: 0667918586)",
           "telephone": "+212528230381",
           "garde": "24h/24",
           "lat": 30.435615,
           "lng": -9.565831
+        },
+        {
+          "id": "tikida",
+          "nom": "Pharmacie Tikida",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "hay Al Houda imm. Tikida n°10, Agadir",
+          "telephone": "+212528320019",
+          "garde": "24h/24",
+          "lat": 30.399252,
+          "lng": -9.543377
         }
       ]
     }
