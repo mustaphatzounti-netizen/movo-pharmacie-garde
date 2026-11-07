@@ -1,7 +1,7 @@
 {
   "ville": "Agadir",
   "exemple": false,
-  "genere_le": "2026-11-07T06:13:56.389Z",
+  "genere_le": "2026-11-07T13:17:28.071Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
   "aujourdhui": "2026-11-07",
@@ -223,22 +223,11 @@
       "date": "2026-11-07",
       "pharmacies": [
         {
-          "id": "agdal",
-          "nom": "Pharmacie Agdal",
-          "zone": "Agadir",
-          "quartier": "",
-          "adresse": "z.i Tilila rue Ghaza imm. Agdal n°47, Agadir",
-          "telephone": "+212528285520",
-          "garde": "24h/24",
-          "lat": 30.40124,
-          "lng": -9.518777
-        },
-        {
           "id": "alandalous",
           "nom": "Pharmacie Al Andalous",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "2 bd Moukaouama imm. Asma, Agadir",
+          "adresse": "2, Angla Bd Al Moukaouama Et Cadi Ayad, Imm. Asma",
           "telephone": "+212528217759",
           "garde": "24h/24",
           "lat": 30.418283,
@@ -249,18 +238,29 @@
           "nom": "Pharmacie Al Imam AlKastalani",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "Bd Abdallah Ben Yacine, Bloc 13 N° 17 Cité Sidi Mohamed, Près De L'école Kastalani",
+          "adresse": "bd Abdallah Ben Yacine bloc 13 n° 17 cité Sidi Mohamed, Agadir",
           "telephone": "+212528224258",
           "garde": "24h/24",
           "lat": 30.426283,
           "lng": -9.580233
         },
         {
+          "id": "amara",
+          "nom": "Pharmacie Amara",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "14 cité Adrar Résid. Fadlallah Gh2 M1, Agadir",
+          "telephone": "+212528218192",
+          "garde": "24h/24",
+          "lat": 30.389356,
+          "lng": -9.504175
+        },
+        {
           "id": "amsernat",
           "nom": "Pharmacie Amsernat",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "Bd Deux Mars, Q. Amsernat, Près Du Souk Al Had",
+          "adresse": "bd Deux Mars q. Amsernat, Agadir",
           "telephone": "+212528239804",
           "garde": "24h/24",
           "lat": 30.415233,
@@ -271,22 +271,55 @@
           "nom": "Pharmacie av. Allal Fassi",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "23, Bd Allal El Fassi, Erac Bouargane, Près De Lycée Zerktouni",
+          "adresse": "23 bd Allal El Fassi Erac Bouargane, Agadir",
           "telephone": "+212528229245",
           "garde": "24h/24",
           "lat": 30.42185,
           "lng": -9.564533
         },
         {
-          "id": "elqods",
-          "nom": "Pharmacie El Qods",
+          "id": "benrahalelbatoire",
+          "nom": "Pharmacie Ben Rahal El batoire",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "69, Rue Imam Chafii, Bloc A5, Près De Hamam Qods",
-          "telephone": "+212540011928",
+          "adresse": "Rue Fès, Bloc 6 Les Abattoires, A Coté De La Place Des Taxis Et De La Boucherie El Afrahe",
+          "telephone": "+212528230890",
           "garde": "24h/24",
-          "lat": 30.414,
-          "lng": -9.555283
+          "lat": 30.40885,
+          "lng": -9.58765
+        },
+        {
+          "id": "dahabia",
+          "nom": "Pharmacie Dahabia",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "535 sect K ElHouda, Agadir",
+          "telephone": "+212528321426",
+          "garde": "24h/24",
+          "lat": 30.39565,
+          "lng": -9.5417
+        },
+        {
+          "id": "elbakri",
+          "nom": "Pharmacie El Bakri",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "1173 Quartier Founty, Agadir",
+          "telephone": "+212528291646",
+          "garde": "24h/24",
+          "lat": 30.398414,
+          "lng": -9.572352
+        },
+        {
+          "id": "elhjouji",
+          "nom": "Pharmacie EL HJOUJI",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "129 Bis, Rue Idrissi, Nouveau Talborjt, En Face De L'annexe Talborjt",
+          "telephone": null,
+          "garde": "Jour",
+          "lat": null,
+          "lng": null
         },
         {
           "id": "europa",
@@ -304,7 +337,7 @@
           "nom": "Pharmacie Faicel",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "1042 Extension Dakhla, Agadir",
+          "adresse": "1042 Extension Dakhla, Avenue Hassan Premier, Devant Résidence Al Boustane",
           "telephone": "+212528238383",
           "garde": "24h/24",
           "lat": 30.405717,
@@ -322,22 +355,11 @@
           "lng": -9.5899
         },
         {
-          "id": "jetsakane",
-          "nom": "Pharmacie Jet Sakane",
-          "zone": "Agadir",
-          "quartier": "",
-          "adresse": "Hay Bensergao Jet Sakane M1 imm. n°42 Salam Houda, Agadir",
-          "telephone": "+212528322064",
-          "garde": "24h/24",
-          "lat": 30.399139,
-          "lng": -9.552138
-        },
-        {
           "id": "kettane",
           "nom": "Pharmacie Kettane",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "2 Lotiss. Saâda Gh.9 Doha (Mobile: 0667918586)",
+          "adresse": "hay Mohammadi résid. Assabah, Agadir",
           "telephone": "+212528230381",
           "garde": "24h/24",
           "lat": 30.435615,
@@ -355,15 +377,15 @@
           "lng": -9.59759
         },
         {
-          "id": "tikida",
-          "nom": "Pharmacie Tikida",
+          "id": "salam",
+          "nom": "Pharmacie Salam",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "hay Al Houda imm. Tikida n°10, Agadir",
-          "telephone": "+212528320019",
+          "adresse": "Bd El Haj Massoud El Wafkaoui, Hay Salam, Près De Place Des Taxi",
+          "telephone": "+212528235636",
           "garde": "24h/24",
-          "lat": 30.399252,
-          "lng": -9.543377
+          "lat": 30.402183,
+          "lng": -9.54915
         }
       ]
     }
