@@ -34,6 +34,12 @@ const BLOGGER_PAGE_ID = '8499368874513364589';    // /p/pharmacie-de-garde-agadi
 const START_MARKER = '<!--PG:START-->';
 const END_MARKER = '<!--PG:END-->';
 
+// Arabic site (ar.agadir-livraison.com) — same static list, Arabic labels.
+const AR_BLOG_ID = '6023995067592991740'; // ليفرور أكادير MOVO (AR) blog — do not change
+const AR_PAGE_ID = '1530460365316216242'; // /p/saydaliya-hirasa-agadir.html — do not change
+const FR_PAGE_TITLE = "Pharmacie de garde Agadir aujourd'hui (24h/24) — liste du jour | MOVO";
+const AR_PAGE_TITLE = 'صيدلية الحراسة أكادير اليوم 24/24 — لائحة اليوم | MOVO';
+
 const {
   BLOGGER_CLIENT_ID,
   BLOGGER_CLIENT_SECRET,
@@ -146,6 +152,79 @@ function render(data) {
   return out;
 }
 
+
+// ---- Arabic version (mirrors the client-side script on the AR Blogger page) ----
+function dateLisibleAr(date) {
+  return new Date(date + 'T12:00:00Z').toLocaleDateString('ar-MA-u-nu-latn', {
+    weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC',
+  });
+}
+
+function carteAr(p) {
+  const adr = [p.quartier, p.adresse].filter(Boolean).join(' — ');
+  const telBtn = p.telephone
+    ? `<a class="pg-btn pg-btn-tel" href="tel:${esc(p.telephone.replace(/\s+/g, ''))}">📞 <span dir="ltr">${esc(p.telephone)}</span></a>`
+    : '';
+  const mapBtn = `<a class="pg-btn pg-btn-carte" href="${esc(lienCarte(p))}" target="_blank" rel="noopener">الطريق</a>`;
+  return (
+    `<li class="pg-carte">` +
+    `<h3 class="pg-nom">${esc(p.nom)}</h3>` +
+    `<p class="pg-adr">${esc(adr)}</p>` +
+    (p.garde ? `<p class="pg-type">حراسة ${esc(p.garde)}</p>` : '') +
+    `<div class="pg-actions">${telBtn}${mapBtn}</div>` +
+    `</li>`
+  );
+}
+
+function listeParZoneAr(pharmacies) {
+  const zones = {};
+  pharmacies.forEach((p) => {
+    const z = p.zone || 'Agadir';
+    (zones[z] = zones[z] || []).push(p);
+  });
+  return Object.keys(zones).map((z) => {
+    const nom = z === 'Agadir' ? 'أكادير' : z;
+    return `<h3 class="pg-zone">${esc(nom)}</h3><ul class="pg-liste">${zones[z].map(carteAr).join('')}</ul>`;
+  }).join('');
+}
+
+function renderAr(data) {
+  const maintenant = localParts(data.fuseau);
+  const aujourdhui = maintenant.heure < data.heure_bascule
+    ? addDays(maintenant.date, -1)
+    : maintenant.date;
+
+  const parDate = {};
+  (data.jours || []).forEach((j) => { parDate[j.date] = j.pharmacies; });
+
+  let out = '';
+  out += `<h2 class="pg-titre">صيدليات الحراسة في أكادير اليوم</h2>`;
+  out += `<p class="pg-titre-ar" lang="fr" dir="ltr">Pharmacies de garde Agadir</p>`;
+  out += `<p class="pg-periode">حراسة يوم ${esc(dateLisibleAr(aujourdhui))}.</p>`;
+
+  if (data.exemple) {
+    out += `<p class="pg-alerte">بيانات تجريبية: اللائحة الحقيقية للصيدليات لم تُدخل بعد.</p>`;
+  }
+
+  const liste = parDate[aujourdhui];
+  const hier = parDate[addDays(aujourdhui, -1)];
+
+  if ((!liste || !liste.length) && hier && hier.length) {
+    out += `<p class="pg-alerte">لائحة اليوم لم تُنشر بعد: هذه حراسة البارح (${esc(dateLisibleAr(addDays(aujourdhui, -1)))})، غالباً مازالت صالحة في الصباح. اتصل بالصيدلية قبل أن تتنقل.</p>`;
+    out += listeParZoneAr(hier);
+  } else if (!liste || !liste.length) {
+    out += `<p class="pg-alerte">لائحة حراسة اليوم لم تُحدث بعد. تحقق في agadir.pharmacieenpermanence.ma أو اتصل بـ 141 (SAMU) في حالة الطوارئ.</p>`;
+  } else {
+    out += listeParZoneAr(liste);
+  }
+
+  const majTxt = new Date(data.genere_le).toLocaleString('fr-FR', { timeZone: data.fuseau });
+  out += `<p class="pg-maj">حسب Pharmacie en permanence وAnnuaire Gratuit. آخر تحديث: <span dir="ltr">${esc(majTxt)}</span>. اتصل بالصيدلية قبل أن تتنقل.</p>`;
+  out += `<p class="pg-urgence">الطوارئ: الإسعاف 141 · الوقاية المدنية 150 · الشرطة 19</p>`;
+
+  return out;
+}
+
 async function getAccessToken() {
   if (!BLOGGER_CLIENT_ID || !BLOGGER_CLIENT_SECRET || !BLOGGER_REFRESH_TOKEN) {
     throw new Error('Missing BLOGGER_CLIENT_ID / BLOGGER_CLIENT_SECRET / BLOGGER_REFRESH_TOKEN env vars (set them as GitHub Secrets).');
@@ -165,12 +244,8 @@ async function getAccessToken() {
   return json.access_token;
 }
 
-async function main() {
-  const data = JSON.parse(fs.readFileSync(GARDE_JSON_PATH, 'utf8'));
-  const innerHtml = render(data);
-
-  const token = await getAccessToken();
-  const api = `https://www.googleapis.com/blogger/v3/blogs/${BLOGGER_BLOG_ID}/pages/${BLOGGER_PAGE_ID}`;
+async function publishPage(token, { label, blogId, pageId, fallbackTitle, innerHtml }) {
+  const api = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/pages/${pageId}`;
 
   const getRes = await fetch(api, { headers: { Authorization: `Bearer ${token}` } });
   if (!getRes.ok) throw new Error(`GET page failed (${getRes.status}): ${await getRes.text()}`);
@@ -189,22 +264,43 @@ async function main() {
   const newHtml = html.slice(0, si + START_MARKER.length) + innerHtml + html.slice(ei);
 
   if (newHtml === html) {
-    console.log('No change since last run — skipping Blogger update.');
+    console.log(`[${label}] No change since last run — skipping Blogger update.`);
     return;
   }
 
   // PATCH (not PUT): a PUT replaces the whole page resource, so sending only
   // `content` wiped the page title (Google then showed "MOVO" as title and H1).
   // The title is also sent explicitly, with a fallback, so it can never be emptied.
-  const PAGE_TITLE = "Pharmacie de garde Agadir aujourd'hui (24h/24) — liste du jour | MOVO";
   const patchRes = await fetch(api, {
     method: 'PATCH',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title: (page.title && page.title.trim()) || PAGE_TITLE, content: newHtml }),
+    body: JSON.stringify({ title: (page.title && page.title.trim()) || fallbackTitle, content: newHtml }),
   });
   if (!patchRes.ok) throw new Error(`PATCH page failed (${patchRes.status}): ${await patchRes.text()}`);
 
-  console.log('Blogger page updated with the static pharmacy list.');
+  console.log(`[${label}] Blogger page updated with the static pharmacy list.`);
+}
+
+async function main() {
+  const data = JSON.parse(fs.readFileSync(GARDE_JSON_PATH, 'utf8'));
+  const token = await getAccessToken();
+
+  // Each page is published independently: a failure on one does not block the other.
+  const targets = [
+    { label: 'FR', blogId: BLOGGER_BLOG_ID, pageId: BLOGGER_PAGE_ID, fallbackTitle: FR_PAGE_TITLE, innerHtml: render(data) },
+    { label: 'AR', blogId: AR_BLOG_ID, pageId: AR_PAGE_ID, fallbackTitle: AR_PAGE_TITLE, innerHtml: renderAr(data) },
+  ];
+
+  let failed = 0;
+  for (const t of targets) {
+    try {
+      await publishPage(token, t);
+    } catch (err) {
+      failed++;
+      console.error(`[${t.label}]`, err);
+    }
+  }
+  if (failed) process.exit(1);
 }
 
 main().catch((err) => {
