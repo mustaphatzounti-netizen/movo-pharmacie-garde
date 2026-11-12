@@ -1,0 +1,43 @@
+name: Liens absolus (maintenance)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run (rapport seulement) ou apply (modifier les pages)'
+        required: true
+        default: 'dry-run'
+        type: choice
+        options:
+          - dry-run
+          - apply
+
+permissions:
+  contents: read
+
+jobs:
+  absolutize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Convertir les liens relatifs en liens absolus
+        env:
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+          MODE: ${{ inputs.mode }}
+        run: node scripts/absolutize-links.mjs
+
+      - name: Sauvegarde du contenu original
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: links-backup-${{ inputs.mode }}
+          path: backup/links-backup.json
+          if-no-files-found: ignore
+          retention-days: 90
