@@ -1,7 +1,7 @@
 {
   "ville": "Agadir",
   "exemple": false,
-  "genere_le": "2026-11-14T10:00:30.894Z",
+  "genere_le": "2026-11-14T12:00:44.321Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
   "aujourdhui": "2026-11-14",
@@ -245,6 +245,17 @@
       "date": "2026-11-14",
       "pharmacies": [
         {
+          "id": "lagrandealfarah",
+          "nom": "La Grande Pharmacie Al Farah",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "Lotissement11. Bd Lagouira. C13 Hay El Farah",
+          "telephone": "+212528281287",
+          "garde": "24h/24",
+          "lat": 30.397497,
+          "lng": -9.568404
+        },
+        {
           "id": "alandalous",
           "nom": "Pharmacie Al Andalous",
           "zone": "Agadir",
@@ -256,15 +267,37 @@
           "lng": -9.57595
         },
         {
+          "id": "assafar",
+          "nom": "Pharmacie Assafar",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "hay Al Houda bloc G n°1 lot.70, Agadir",
+          "telephone": "+212528320239",
+          "garde": "24h/24",
+          "lat": 30.398401,
+          "lng": -9.533818
+        },
+        {
           "id": "chifa",
           "nom": "Pharmacie Chifa",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "94 bd Hassan 1er cité Dakhla, Agadir",
+          "adresse": "94, Bd Hassan 1er, Cité Dakhla, Près De Carrefour Dakhla",
           "telephone": "+212528223712",
           "garde": "24h/24",
           "lat": 30.4093,
           "lng": -9.558833
+        },
+        {
+          "id": "detalborjt",
+          "nom": "Pharmacie de Talborjt",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "42, Rue Mehdi Ben Toumert,Talborjt, Près De Cinema Sahara",
+          "telephone": "+212528822861",
+          "garde": "24h/24",
+          "lat": 30.423855,
+          "lng": -9.592787
         },
         {
           "id": "faicel",
@@ -326,11 +359,33 @@
           "nom": "Pharmacie Mokawama",
           "zone": "Agadir",
           "quartier": "",
-          "adresse": "8 bd Moukaouama imm. Hamria q.i., Agadir",
+          "adresse": "8, Bd Al Moukaouama, Imm. Hamria Q.i., A Coté Dar Chabab Hay Hassani",
           "telephone": "+212528842634",
           "garde": "24h/24",
           "lat": 30.415533,
           "lng": -9.582333
+        },
+        {
+          "id": "niaamatallah",
+          "nom": "Pharmacie Niaamat Allah",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "1, Rue Makka, Lot 1882 Tilila (Tel 2 : 0703044258)",
+          "telephone": "+212703044258",
+          "garde": "24h/24",
+          "lat": 30.403887,
+          "lng": -9.515696
+        },
+        {
+          "id": "nourlkheir",
+          "nom": "Pharmacie Nour Lkheir",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "39 projet Tarik Lkheir lot C, Agadir",
+          "telephone": "+212525129353",
+          "garde": "24h/24",
+          "lat": 30.3913,
+          "lng": -9.554196
         }
       ]
     }
