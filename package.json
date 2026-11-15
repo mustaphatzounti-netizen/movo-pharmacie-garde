@@ -5,7 +5,7 @@
   "description": "Pharmacies de garde à Agadir : récupération quotidienne et widget Blogger",
   "scripts": {
     "scrape": "node scripts/scrape.mjs",
-    "test": "node --test scripts/scrape.test.mjs"
+    "test": "node --test scripts/scrape.test.mjs scripts/scrape-villes.test.mjs"
   },
   "dependencies": { "cheerio": "1.0.0" },
   "engines": { "node": ">=20" }
