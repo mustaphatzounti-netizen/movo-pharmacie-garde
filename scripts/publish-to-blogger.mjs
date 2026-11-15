@@ -234,8 +234,10 @@ function renderLd(data) {
       },
     ],
   };
+  // Escape <, >, & and every non-ASCII character: Blogger turns some characters
+  // (— · …) into HTML entities inside <script>, which would corrupt the text.
   const json = JSON.stringify(graph)
-    .replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
+    .replace(/[<>&]|[^\x00-\x7f]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'));
   return `<script type="application/ld+json">${json}</script>`;
 }
 
