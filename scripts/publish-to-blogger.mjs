@@ -488,7 +488,7 @@ async function publishPage(token, { label, blogId, pageId, fallbackTitle, innerH
 
   if (newHtml === html) {
     console.log(`[${label}] No change since last run — skipping Blogger update.`);
-    return;
+    return false;
   }
 
   // PATCH (not PUT): a PUT replaces the whole page resource, so sending only
@@ -502,6 +502,33 @@ async function publishPage(token, { label, blogId, pageId, fallbackTitle, innerH
   if (!patchRes.ok) throw new Error(`PATCH page failed (${patchRes.status}): ${await patchRes.text()}`);
 
   console.log(`[${label}] Blogger page updated with the static pharmacy list.`);
+  return true;
+}
+
+// Tell Bing (and so ChatGPT / Copilot, which use Bing) that the pages changed.
+// Optional: runs only if the BING_API_KEY secret exists. Never makes the run fail.
+async function soumettreABing(urls) {
+  const key = process.env.BING_API_KEY;
+  if (!key) { console.log('Bing: no BING_API_KEY secret, skipped.'); return; }
+  if (!urls.length) { console.log('Bing: nothing changed, nothing to submit.'); return; }
+  const parSite = {};
+  for (const u of urls) {
+    const site = new URL(u).origin + '/';
+    (parSite[site] = parSite[site] || []).push(u);
+  }
+  for (const [siteUrl, urlList] of Object.entries(parSite)) {
+    try {
+      const res = await fetch('https://ssl.bing.com/webmaster/api.svc/json/SubmitUrlbatch?apikey=' + encodeURIComponent(key), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: JSON.stringify({ siteUrl, urlList }),
+      });
+      if (res.ok) console.log(`Bing: ${urlList.length} URL(s) submitted for ${siteUrl}`);
+      else console.log(`::warning::Bing submission failed for ${siteUrl} (${res.status}): ${(await res.text()).slice(0, 200)}`);
+    } catch (err) {
+      console.log(`::warning::Bing submission error for ${siteUrl}: ${err.message}`);
+    }
+  }
 }
 
 async function main() {
@@ -510,8 +537,8 @@ async function main() {
 
   // Each page is published independently: a failure on one does not block the other.
   const targets = [
-    { label: 'FR', blogId: BLOGGER_BLOG_ID, pageId: BLOGGER_PAGE_ID, fallbackTitle: FR_PAGE_TITLE, innerHtml: render(data), ldHtml: renderLd(data) },
-    { label: 'AR', blogId: AR_BLOG_ID, pageId: AR_PAGE_ID, fallbackTitle: AR_PAGE_TITLE, innerHtml: renderAr(data), ldHtml: renderLdAr(data) },
+    { label: 'FR', url: FR_PAGE_URL, blogId: BLOGGER_BLOG_ID, pageId: BLOGGER_PAGE_ID, fallbackTitle: FR_PAGE_TITLE, innerHtml: render(data), ldHtml: renderLd(data) },
+    { label: 'AR', url: AR_PAGE_URL, blogId: AR_BLOG_ID, pageId: AR_PAGE_ID, fallbackTitle: AR_PAGE_TITLE, innerHtml: renderAr(data), ldHtml: renderLdAr(data) },
   ];
 
   // Nearby cities: only pages that exist (real page id) and whose JSON file was generated.
@@ -519,20 +546,22 @@ async function main() {
     if (!/^\d+$/.test(v.pageId) || !fs.existsSync(v.jsonPath)) continue;
     const dv = JSON.parse(fs.readFileSync(v.jsonPath, 'utf8'));
     targets.push({
-      label: v.label, blogId: BLOGGER_BLOG_ID, pageId: v.pageId, fallbackTitle: v.fallbackTitle,
+      label: v.label, url: v.cfg.url, blogId: BLOGGER_BLOG_ID, pageId: v.pageId, fallbackTitle: v.fallbackTitle,
       innerHtml: render(dv, v.cfg), ldHtml: renderLd(dv, v.cfg),
     });
   }
 
   let failed = 0;
+  const changees = [];
   for (const t of targets) {
     try {
-      await publishPage(token, t);
+      if (await publishPage(token, t)) changees.push(t.url);
     } catch (err) {
       failed++;
       console.error(`[${t.label}]`, err);
     }
   }
+  await soumettreABing(changees);
   if (failed) process.exit(1);
 }
 
