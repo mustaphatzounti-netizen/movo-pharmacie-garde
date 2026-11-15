@@ -83,6 +83,12 @@ const AR_PAGE_ID = '1530460365316216242'; // /p/saydaliya-hirasa-agadir.html —
 const FR_PAGE_TITLE = "Pharmacie de garde Agadir aujourd'hui (24h/24) — liste du jour | MOVO";
 const AR_PAGE_TITLE = 'صيدلية الحراسة أكادير اليوم 24/24 — لائحة اليوم | MOVO';
 
+// English site (en.agadir-livraison.com) — same static list, English labels.
+const EN_BLOG_ID = '4591946336174594751'; // MOVO EN blog — do not change
+const EN_PAGE_ID = '8061459893890945181'; // /p/on-call-pharmacy-agadir.html — do not change
+const EN_PAGE_URL = 'https://en.agadir-livraison.com/p/on-call-pharmacy-agadir.html';
+const EN_PAGE_TITLE = 'On-call pharmacy Agadir today (24/7): how to find one open | MOVO';
+
 const {
   BLOGGER_CLIENT_ID,
   BLOGGER_CLIENT_SECRET,
@@ -437,6 +443,130 @@ function renderLdAr(data) {
   return `<script type="application/ld+json">${jsonSur(graph)}</script>`;
 }
 
+// ---- English version (en.agadir-livraison.com), static list only, no client script ----
+function dateLisibleEn(date) {
+  return new Date(date + 'T12:00:00Z').toLocaleDateString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC',
+  });
+}
+
+function gardeEn(g) {
+  const k = String(g || '').toLowerCase();
+  if (k === '24h/24') return '24/7';
+  if (k === 'jour') return 'day';
+  if (k === 'nuit') return 'night';
+  return k;
+}
+
+function resumeEn(pharmacies, date) {
+  const n = pharmacies.length;
+  const tous24 = pharmacies.every((p) => p.garde === '24h/24');
+  return `Today, ${dateLisibleEn(date)} ${date.slice(0, 4)}, ${n} pharmac${n > 1 ? 'ies are' : 'y is'} on call in Agadir: ` +
+    `${listeNoms(pharmacies.map((p) => p.nom), 'and')}${tous24 ? (n > 1 ? ', all open 24/7' : ', open 24/7') : ''}.`;
+}
+
+function lienLivraisonEn(p) {
+  return `https://wa.me/${WHATSAPP_MOVO}?text=` + encodeURIComponent(
+    `Hello MOVO, I would like a medicine delivered from ${p.nom} (on-call pharmacy, Agadir).`);
+}
+
+function lienPartageEn(pharmacies, date) {
+  const lignes = [`On-call pharmacies in Agadir — ${dateLisibleEn(date)}:`];
+  pharmacies.forEach((p) => { lignes.push('• ' + p.nom + (p.telephone ? ' — ' + p.telephone : '')); });
+  lignes.push('', 'Up-to-date list: ' + EN_PAGE_URL);
+  return 'https://wa.me/?text=' + encodeURIComponent(lignes.join('\n'));
+}
+
+function carteEn(p) {
+  const adr = [p.quartier, p.adresse].filter(Boolean).join(' — ');
+  const telBtn = p.telephone
+    ? `<a class="pg-btn pg-btn-tel" href="tel:${esc(p.telephone.replace(/\s+/g, ''))}">📞 ${esc(p.telephone)}</a>`
+    : '';
+  const mapBtn = `<a class="pg-btn pg-btn-carte" href="${esc(lienCarte(p))}" target="_blank" rel="noopener">Directions</a>`;
+  const livrerBtn = `<a class="pg-btn pg-btn-livrer" href="${esc(lienLivraisonEn(p))}" target="_blank" rel="noopener">🛵 Deliver it to me</a>`;
+  return (
+    `<li class="pg-carte">` +
+    `<h3 class="pg-nom">${esc(p.nom)}</h3>` +
+    (adr ? `<p class="pg-adr">${esc(adr)}</p>` : '') +
+    (p.garde ? `<p class="pg-type">On call ${esc(gardeEn(p.garde))}</p>` : '') +
+    `<div class="pg-actions">${telBtn}${mapBtn}${livrerBtn}</div>` +
+    `</li>`
+  );
+}
+
+function listeParZoneEn(pharmacies) {
+  const zones = {};
+  pharmacies.forEach((p) => {
+    const z = p.zone || 'Agadir';
+    (zones[z] = zones[z] || []).push(p);
+  });
+  const noms = Object.keys(zones);
+  return noms.map((z) => (noms.length > 1 ? `<h3 class="pg-zone">${esc(z)}</h3>` : '') +
+    `<ul class="pg-liste">${zones[z].map(carteEn).join('')}</ul>`).join('');
+}
+
+function renderEn(data) {
+  const { aujourdhui, pharmacies, date, veille } = listeDuJour(data);
+
+  let out = '';
+  out += `<h2 class="pg-titre">On-call pharmacies in Agadir today</h2>`;
+  out += `<p class="pg-sous-titre" lang="fr">Pharmacies de garde Agadir</p>`;
+  out += `<p class="pg-periode">On-call rota for ${esc(dateLisibleEn(aujourdhui))}.</p>`;
+  if (pharmacies && !veille) out += `<p class="pg-resume">${esc(resumeEn(pharmacies, date))}</p>`;
+
+  if (data.exemple) {
+    out += `<p class="pg-alerte">Sample data: the real pharmacy list has not been entered yet.</p>`;
+  }
+
+  if (pharmacies && veille) {
+    out += `<p class="pg-alerte">Today's list is not published yet: here is yesterday's rota (${esc(dateLisibleEn(date))}), often still valid in the morning. Call the pharmacy before you go.</p>`;
+  } else if (!pharmacies) {
+    out += `<p class="pg-alerte">Today's on-call list is not updated yet. Check agadir.pharmacieenpermanence.ma or call 141 (SAMU) in an emergency.</p>`;
+  }
+  if (pharmacies) {
+    out += `<div class="pg-outils"><a class="pg-btn pg-btn-wa" href="${esc(lienPartageEn(pharmacies, date))}" target="_blank" rel="noopener">Send the list on WhatsApp</a></div>`;
+    out += `<div class="pg-resultats">${listeParZoneEn(pharmacies)}</div>`;
+  }
+
+  const majTxt = new Date(data.genere_le).toLocaleString('en-GB', { timeZone: data.fuseau, dateStyle: 'medium', timeStyle: 'short' });
+  out += `<p class="pg-maj">Sources: Telecontact, Annuaire Gratuit and Le Matin (only pharmacies listed by at least two sources are shown). Updated on ${esc(majTxt)} (Morocco time). Call the pharmacy before you go.</p>`;
+  out += `<p class="pg-urgence">Emergencies: ambulance (SAMU) 141 · Civil protection 150 · Police 19</p>`;
+
+  return out;
+}
+
+function renderLdEn(data) {
+  const { pharmacies, date } = listeDuJour(data);
+  if (!pharmacies) return '';
+  const listeId = `${EN_PAGE_URL}#garde-du-jour`;
+  const graph = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'WebPage', '@id': `${EN_PAGE_URL}#webpage`, dateModified: data.genere_le, mainEntity: { '@id': listeId } },
+      {
+        '@type': 'ItemList',
+        '@id': listeId,
+        name: `On-call pharmacies in Agadir — ${dateLisibleEn(date)}`,
+        inLanguage: 'en',
+        itemListOrder: 'https://schema.org/ItemListUnordered',
+        numberOfItems: pharmacies.length,
+        itemListElement: pharmacies.map((p, i) => {
+          const item = {
+            '@type': 'Pharmacy',
+            name: p.nom,
+            address: { '@type': 'PostalAddress', streetAddress: [p.quartier, p.adresse].filter(Boolean).join(', '), addressLocality: 'Agadir', addressCountry: 'MA' },
+          };
+          if (p.telephone) item.telephone = p.telephone;
+          if (p.lat != null && p.lng != null) item.geo = { '@type': 'GeoCoordinates', latitude: p.lat, longitude: p.lng };
+          if (p.garde) item.description = `On-call pharmacy (${gardeEn(p.garde)}) in Agadir on ${dateLisibleEn(date)}.`;
+          return { '@type': 'ListItem', position: i + 1, item };
+        }),
+      },
+    ],
+  };
+  return `<script type="application/ld+json">${jsonSur(graph)}</script>`;
+}
+
 async function getAccessToken() {
   if (!BLOGGER_CLIENT_ID || !BLOGGER_CLIENT_SECRET || !BLOGGER_REFRESH_TOKEN) {
     throw new Error('Missing BLOGGER_CLIENT_ID / BLOGGER_CLIENT_SECRET / BLOGGER_REFRESH_TOKEN env vars (set them as GitHub Secrets).');
@@ -539,6 +669,7 @@ async function main() {
   const targets = [
     { label: 'FR', url: FR_PAGE_URL, blogId: BLOGGER_BLOG_ID, pageId: BLOGGER_PAGE_ID, fallbackTitle: FR_PAGE_TITLE, innerHtml: render(data), ldHtml: renderLd(data) },
     { label: 'AR', url: AR_PAGE_URL, blogId: AR_BLOG_ID, pageId: AR_PAGE_ID, fallbackTitle: AR_PAGE_TITLE, innerHtml: renderAr(data), ldHtml: renderLdAr(data) },
+    { label: 'EN', url: EN_PAGE_URL, blogId: EN_BLOG_ID, pageId: EN_PAGE_ID, fallbackTitle: EN_PAGE_TITLE, innerHtml: renderEn(data), ldHtml: renderLdEn(data) },
   ];
 
   // Nearby cities: only pages that exist (real page id) and whose JSON file was generated.
