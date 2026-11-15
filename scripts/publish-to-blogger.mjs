@@ -37,7 +37,45 @@ const END_MARKER = '<!--PG:END-->';
 const LD_START_MARKER = '<!--PG:LD:START-->';
 const LD_END_MARKER = '<!--PG:LD:END-->';
 const FR_PAGE_URL = 'https://www.agadir-livraison.com/p/pharmacie-de-garde-agadir.html';
+const AR_PAGE_URL = 'https://ar.agadir-livraison.com/p/saydaliya-hirasa-agadir.html';
 const WHATSAPP_MOVO = '212605577990';
+
+// Per-page settings for the French pages (Agadir + nearby cities). Agadir texts are unchanged.
+const CFG_AGADIR = {
+  url: FR_PAGE_URL,
+  ville: 'Agadir',
+  titreAr: 'صيدليات الحراسة بأكادير',
+  attenteTxt: "La liste de garde d'aujourd'hui n'est pas encore mise à jour. Vérifiez sur agadir.pharmacieenpermanence.ma ou appelez le 141 (SAMU) en cas d'urgence.",
+  sourcesTxt: "D'après Pharmacie en permanence et Annuaire Gratuit.",
+};
+const CFG_VILLES = [
+  {
+    label: 'FR-INEZGANE',
+    pageId: '__INEZGANE_PAGE_ID__',
+    jsonPath: 'public/garde-inezgane.json',
+    fallbackTitle: "Pharmacie de garde Inezgane aujourd'hui (24h/24) — liste du jour | MOVO",
+    cfg: {
+      url: 'https://www.agadir-livraison.com/p/pharmacie-de-garde-inezgane.html',
+      ville: 'Inezgane',
+      titreAr: 'صيدليات الحراسة بإنزكان',
+      attenteTxt: "La liste de garde d'aujourd'hui n'est pas encore mise à jour. Appelez la pharmacie avant de vous déplacer, ou le 141 (SAMU) en cas d'urgence.",
+      sourcesTxt: "D'après Telecontact et Annuaire Gratuit : seules les pharmacies citées par les deux sont affichées.",
+    },
+  },
+  {
+    label: 'FR-AIT-MELLOUL',
+    pageId: '__AIT_MELLOUL_PAGE_ID__',
+    jsonPath: 'public/garde-ait-melloul.json',
+    fallbackTitle: "Pharmacie de garde Aït Melloul aujourd'hui (24h/24) — liste du jour | MOVO",
+    cfg: {
+      url: 'https://www.agadir-livraison.com/p/pharmacie-de-garde-ait-melloul.html',
+      ville: 'Aït Melloul',
+      titreAr: 'صيدليات الحراسة بأيت ملول',
+      attenteTxt: "La liste de garde d'aujourd'hui n'est pas encore mise à jour. Appelez la pharmacie avant de vous déplacer, ou le 141 (SAMU) en cas d'urgence.",
+      sourcesTxt: "D'après Telecontact et Annuaire Gratuit : seules les pharmacies citées par les deux sont affichées.",
+    },
+  },
+];
 
 // Arabic site (ar.agadir-livraison.com) — same static list, Arabic labels.
 const AR_BLOG_ID = '6023995067592991740'; // ليفرور أكادير MOVO (AR) blog — do not change
@@ -83,34 +121,34 @@ function dateLisible(date) {
   });
 }
 
-function lienCarte(p) {
+function lienCarte(p, ville = 'Agadir') {
   const q = (p.lat != null && p.lng != null)
     ? `${p.lat},${p.lng}`
-    : [p.nom, p.adresse, p.quartier, 'Agadir'].filter(Boolean).join(', ');
+    : [p.nom, p.adresse, p.quartier, ville].filter(Boolean).join(', ');
   return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
 }
 
 // WhatsApp MOVO : livraison depuis cette pharmacie de garde (same text as the client widget).
-function lienLivraison(p) {
+function lienLivraison(p, cfg) {
   return `https://wa.me/${WHATSAPP_MOVO}?text=` + encodeURIComponent(
-    `Bonjour MOVO, je voudrais me faire livrer un médicament depuis la ${p.nom} (pharmacie de garde, Agadir).`);
+    `Bonjour MOVO, je voudrais me faire livrer un médicament depuis la ${p.nom} (pharmacie de garde, ${cfg.ville}).`);
 }
 
 // Share today's list on WhatsApp (same text as the client widget).
-function lienPartage(pharmacies, date) {
-  const lignes = [`Pharmacies de garde à Agadir — ${dateLisible(date)} :`];
+function lienPartage(pharmacies, date, cfg) {
+  const lignes = [`Pharmacies de garde à ${cfg.ville} — ${dateLisible(date)} :`];
   pharmacies.forEach((p) => { lignes.push('• ' + p.nom + (p.telephone ? ' — ' + p.telephone : '')); });
-  lignes.push('', 'Liste à jour : ' + FR_PAGE_URL);
+  lignes.push('', 'Liste à jour : ' + cfg.url);
   return 'https://wa.me/?text=' + encodeURIComponent(lignes.join('\n'));
 }
 
-function carte(p) {
+function carte(p, cfg) {
   const adr = [p.quartier, p.adresse].filter(Boolean).join(' — ');
   const telBtn = p.telephone
     ? `<a class="pg-btn pg-btn-tel" href="tel:${esc(p.telephone.replace(/\s+/g, ''))}">📞 ${esc(p.telephone)}</a>`
     : '';
-  const mapBtn = `<a class="pg-btn pg-btn-carte" href="${esc(lienCarte(p))}" target="_blank" rel="noopener">Itinéraire</a>`;
-  const livrerBtn = `<a class="pg-btn pg-btn-livrer" href="${esc(lienLivraison(p))}" target="_blank" rel="noopener">🛵 Me faire livrer</a>`;
+  const mapBtn = `<a class="pg-btn pg-btn-carte" href="${esc(lienCarte(p, cfg.ville))}" target="_blank" rel="noopener">Itinéraire</a>`;
+  const livrerBtn = `<a class="pg-btn pg-btn-livrer" href="${esc(lienLivraison(p, cfg))}" target="_blank" rel="noopener">🛵 Me faire livrer</a>`;
   return (
     `<li class="pg-carte">` +
       `<h3 class="pg-nom">${esc(p.nom)}</h3>` +
@@ -122,25 +160,25 @@ function carte(p) {
 }
 
 // Zone headings only when there is more than one zone (same as the client widget).
-function listeParZone(pharmacies) {
+function listeParZone(pharmacies, cfg) {
   const zones = {};
   pharmacies.forEach((p) => {
-    const z = p.zone || 'Agadir';
+    const z = p.zone || cfg.ville;
     (zones[z] = zones[z] || []).push(p);
   });
   const noms = Object.keys(zones);
   return noms.map((z) => {
-    const items = zones[z].map(carte).join('');
+    const items = zones[z].map((p) => carte(p, cfg)).join('');
     return (noms.length > 1 ? `<h3 class="pg-zone">${esc(z)}</h3>` : '') + `<ul class="pg-liste">${items}</ul>`;
   }).join('');
 }
 
 // Tool bar above the list: nearest pharmacy (handled by the client script) + WhatsApp share.
-function outils(pharmacies, date) {
+function outils(pharmacies, date, cfg) {
   return (
     `<div class="pg-outils">` +
       `<button type="button" class="pg-btn pg-btn-proche">📍 La plus proche de moi</button>` +
-      `<a class="pg-btn pg-btn-wa" href="${esc(lienPartage(pharmacies, date))}" target="_blank" rel="noopener">Envoyer la liste sur WhatsApp</a>` +
+      `<a class="pg-btn pg-btn-wa" href="${esc(lienPartage(pharmacies, date, cfg))}" target="_blank" rel="noopener">Envoyer la liste sur WhatsApp</a>` +
     `</div>` +
     `<p class="pg-info" hidden></p>`
   );
@@ -163,12 +201,12 @@ function listeDuJour(data) {
 
 // Mirrors the client-side afficher() function exactly (initial state, before
 // "nearest pharmacy" sorting), but returns an HTML string instead of manipulating the DOM.
-function render(data) {
+function render(data, cfg = CFG_AGADIR) {
   const { aujourdhui, pharmacies, date, veille } = listeDuJour(data);
 
   let out = '';
-  out += `<h2 class="pg-titre">Pharmacies de garde à ${esc(data.ville || 'Agadir')}</h2>`;
-  out += `<p class="pg-titre-ar">صيدليات الحراسة بأكادير</p>`;
+  out += `<h2 class="pg-titre">Pharmacies de garde à ${esc(data.ville || cfg.ville)}</h2>`;
+  out += `<p class="pg-titre-ar">${esc(cfg.titreAr)}</p>`;
   out += `<p class="pg-periode">Garde du ${esc(dateLisible(aujourdhui))}.</p>`;
 
   if (data.exemple) {
@@ -178,15 +216,15 @@ function render(data) {
   if (pharmacies && veille) {
     out += `<p class="pg-alerte">La liste d'aujourd'hui n'est pas encore publiée : voici la garde d'hier (${esc(dateLisible(date))}), souvent encore valable le matin. Appelez la pharmacie avant de vous déplacer.</p>`;
   } else if (!pharmacies) {
-    out += `<p class="pg-alerte">La liste de garde d'aujourd'hui n'est pas encore mise à jour. Vérifiez sur agadir.pharmacieenpermanence.ma ou appelez le 141 (SAMU) en cas d'urgence.</p>`;
+    out += `<p class="pg-alerte">${esc(cfg.attenteTxt)}</p>`;
   }
   if (pharmacies) {
-    out += outils(pharmacies, date);
-    out += `<div class="pg-resultats">${listeParZone(pharmacies)}</div>`;
+    out += outils(pharmacies, date, cfg);
+    out += `<div class="pg-resultats">${listeParZone(pharmacies, cfg)}</div>`;
   }
 
   const majTxt = new Date(data.genere_le).toLocaleString('fr-FR', { timeZone: data.fuseau });
-  out += `<p class="pg-maj">D'après Pharmacie en permanence et Annuaire Gratuit. Mis à jour le ${esc(majTxt)}. Appelez la pharmacie avant de vous déplacer.</p>`;
+  out += `<p class="pg-maj">${esc(cfg.sourcesTxt)} Mis à jour le ${esc(majTxt)}. Appelez la pharmacie avant de vous déplacer.</p>`;
   out += `<p class="pg-urgence">Urgences : SAMU 141 · Protection civile 150 · Police 19</p>`;
 
   return out;
@@ -196,23 +234,23 @@ function render(data) {
 // merged (same @id) with the WebPage node the Blogger theme already outputs,
 // plus a daily dateModified. Written between PG:LD markers, OUTSIDE #pg-garde,
 // so the client script (which re-renders #pg-garde) never removes it.
-function renderLd(data) {
+function renderLd(data, cfg = CFG_AGADIR) {
   const { pharmacies, date } = listeDuJour(data);
   if (!pharmacies) return '';
-  const listeId = `${FR_PAGE_URL}#garde-du-jour`;
+  const listeId = `${cfg.url}#garde-du-jour`;
   const graph = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'WebPage',
-        '@id': `${FR_PAGE_URL}#webpage`,
+        '@id': `${cfg.url}#webpage`,
         dateModified: data.genere_le,
         mainEntity: { '@id': listeId },
       },
       {
         '@type': 'ItemList',
         '@id': listeId,
-        name: `Pharmacies de garde à Agadir — ${dateLisible(date)}`,
+        name: `Pharmacies de garde à ${cfg.ville} — ${dateLisible(date)}`,
         itemListOrder: 'https://schema.org/ItemListUnordered',
         numberOfItems: pharmacies.length,
         itemListElement: pharmacies.map((p, i) => {
@@ -222,23 +260,26 @@ function renderLd(data) {
             address: {
               '@type': 'PostalAddress',
               streetAddress: [p.quartier, p.adresse].filter(Boolean).join(', '),
-              addressLocality: 'Agadir',
+              addressLocality: cfg.ville,
               addressCountry: 'MA',
             },
           };
           if (p.telephone) item.telephone = p.telephone;
           if (p.lat != null && p.lng != null) item.geo = { '@type': 'GeoCoordinates', latitude: p.lat, longitude: p.lng };
-          if (p.garde) item.description = `Pharmacie de garde ${p.garde} à Agadir le ${dateLisible(date)}.`;
+          if (p.garde) item.description = `Pharmacie de garde ${p.garde} à ${cfg.ville} le ${dateLisible(date)}.`;
           return { '@type': 'ListItem', position: i + 1, item };
         }),
       },
     ],
   };
-  // Escape <, >, & and every non-ASCII character: Blogger turns some characters
-  // (— · …) into HTML entities inside <script>, which would corrupt the text.
-  const json = JSON.stringify(graph)
+  return `<script type="application/ld+json">${jsonSur(graph)}</script>`;
+}
+
+// JSON for a <script> inside Blogger content: escape <, >, & and every non-ASCII character,
+// because Blogger turns some characters (— · …) into HTML entities inside <script>.
+function jsonSur(obj) {
+  return JSON.stringify(obj)
     .replace(/[<>&]|[^\x00-\x7f]/g, (c) => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'));
-  return `<script type="application/ld+json">${json}</script>`;
 }
 
 
@@ -249,42 +290,63 @@ function dateLisibleAr(date) {
   });
 }
 
+// WhatsApp MOVO (Arabic page): delivery from this pharmacy — same text as the AR client widget.
+function lienLivraisonAr(p) {
+  return `https://wa.me/${WHATSAPP_MOVO}?text=` + encodeURIComponent(
+    `السلام عليكم MOVO، بغيت توصلوني دوا من ${p.nom} (صيدلية الحراسة، أكادير).`);
+}
+
+function lienPartageAr(pharmacies, date) {
+  const lignes = [`صيدليات الحراسة في أكادير — ${dateLisibleAr(date)}:`];
+  pharmacies.forEach((p) => { lignes.push('• ' + p.nom + (p.telephone ? ' — ' + p.telephone : '')); });
+  lignes.push('', 'اللائحة محدثة: ' + AR_PAGE_URL);
+  return 'https://wa.me/?text=' + encodeURIComponent(lignes.join('\n'));
+}
+
 function carteAr(p) {
   const adr = [p.quartier, p.adresse].filter(Boolean).join(' — ');
   const telBtn = p.telephone
     ? `<a class="pg-btn pg-btn-tel" href="tel:${esc(p.telephone.replace(/\s+/g, ''))}">📞 <span dir="ltr">${esc(p.telephone)}</span></a>`
     : '';
   const mapBtn = `<a class="pg-btn pg-btn-carte" href="${esc(lienCarte(p))}" target="_blank" rel="noopener">الطريق</a>`;
+  const livrerBtn = `<a class="pg-btn pg-btn-livrer" href="${esc(lienLivraisonAr(p))}" target="_blank" rel="noopener">🛵 وصّلها لي</a>`;
   return (
     `<li class="pg-carte">` +
-    `<h3 class="pg-nom">${esc(p.nom)}</h3>` +
-    `<p class="pg-adr">${esc(adr)}</p>` +
+    `<h3 class="pg-nom" dir="auto">${esc(p.nom)}</h3>` +
+    `<p class="pg-adr" dir="auto">${esc(adr)}</p>` +
     (p.garde ? `<p class="pg-type">حراسة ${esc(p.garde)}</p>` : '') +
-    `<div class="pg-actions">${telBtn}${mapBtn}</div>` +
+    `<div class="pg-actions">${telBtn}${mapBtn}${livrerBtn}</div>` +
     `</li>`
   );
 }
 
+// Zone headings only when there is more than one zone (same as the AR client widget).
 function listeParZoneAr(pharmacies) {
   const zones = {};
   pharmacies.forEach((p) => {
     const z = p.zone || 'Agadir';
     (zones[z] = zones[z] || []).push(p);
   });
-  return Object.keys(zones).map((z) => {
+  const noms = Object.keys(zones);
+  return noms.map((z) => {
     const nom = z === 'Agadir' ? 'أكادير' : z;
-    return `<h3 class="pg-zone">${esc(nom)}</h3><ul class="pg-liste">${zones[z].map(carteAr).join('')}</ul>`;
+    return (noms.length > 1 ? `<h3 class="pg-zone">${esc(nom)}</h3>` : '') + `<ul class="pg-liste">${zones[z].map(carteAr).join('')}</ul>`;
   }).join('');
 }
 
-function renderAr(data) {
-  const maintenant = localParts(data.fuseau);
-  const aujourdhui = maintenant.heure < data.heure_bascule
-    ? addDays(maintenant.date, -1)
-    : maintenant.date;
+function outilsAr(pharmacies, date) {
+  return (
+    `<div class="pg-outils">` +
+      `<button type="button" class="pg-btn pg-btn-proche">📍 أقرب صيدلية لي</button>` +
+      `<a class="pg-btn pg-btn-wa" href="${esc(lienPartageAr(pharmacies, date))}" target="_blank" rel="noopener">أرسل اللائحة في واتساب</a>` +
+    `</div>` +
+    `<p class="pg-info" hidden></p>`
+  );
+}
 
-  const parDate = {};
-  (data.jours || []).forEach((j) => { parDate[j.date] = j.pharmacies; });
+// Mirrors the AR client widget (initial state, before "nearest pharmacy" sorting).
+function renderAr(data) {
+  const { aujourdhui, pharmacies, date, veille } = listeDuJour(data);
 
   let out = '';
   out += `<h2 class="pg-titre">صيدليات الحراسة في أكادير اليوم</h2>`;
@@ -295,16 +357,14 @@ function renderAr(data) {
     out += `<p class="pg-alerte">بيانات تجريبية: اللائحة الحقيقية للصيدليات لم تُدخل بعد.</p>`;
   }
 
-  const liste = parDate[aujourdhui];
-  const hier = parDate[addDays(aujourdhui, -1)];
-
-  if ((!liste || !liste.length) && hier && hier.length) {
-    out += `<p class="pg-alerte">لائحة اليوم لم تُنشر بعد: هذه حراسة البارح (${esc(dateLisibleAr(addDays(aujourdhui, -1)))})، غالباً مازالت صالحة في الصباح. اتصل بالصيدلية قبل أن تتنقل.</p>`;
-    out += listeParZoneAr(hier);
-  } else if (!liste || !liste.length) {
+  if (pharmacies && veille) {
+    out += `<p class="pg-alerte">لائحة اليوم لم تُنشر بعد: هذه حراسة البارح (${esc(dateLisibleAr(date))})، غالباً مازالت صالحة في الصباح. اتصل بالصيدلية قبل أن تتنقل.</p>`;
+  } else if (!pharmacies) {
     out += `<p class="pg-alerte">لائحة حراسة اليوم لم تُحدث بعد. تحقق في agadir.pharmacieenpermanence.ma أو اتصل بـ 141 (SAMU) في حالة الطوارئ.</p>`;
-  } else {
-    out += listeParZoneAr(liste);
+  }
+  if (pharmacies) {
+    out += outilsAr(pharmacies, date);
+    out += `<div class="pg-resultats">${listeParZoneAr(pharmacies)}</div>`;
   }
 
   const majTxt = new Date(data.genere_le).toLocaleString('fr-FR', { timeZone: data.fuseau });
@@ -312,6 +372,38 @@ function renderAr(data) {
   out += `<p class="pg-urgence">الطوارئ: الإسعاف 141 · الوقاية المدنية 150 · الشرطة 19</p>`;
 
   return out;
+}
+
+// JSON-LD for the Arabic page (same idea as renderLd, Arabic names).
+function renderLdAr(data) {
+  const { pharmacies, date } = listeDuJour(data);
+  if (!pharmacies) return '';
+  const listeId = `${AR_PAGE_URL}#garde-du-jour`;
+  const graph = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'WebPage', '@id': `${AR_PAGE_URL}#webpage`, dateModified: data.genere_le, mainEntity: { '@id': listeId } },
+      {
+        '@type': 'ItemList',
+        '@id': listeId,
+        name: `صيدليات الحراسة في أكادير — ${dateLisibleAr(date)}`,
+        inLanguage: 'ar',
+        itemListOrder: 'https://schema.org/ItemListUnordered',
+        numberOfItems: pharmacies.length,
+        itemListElement: pharmacies.map((p, i) => {
+          const item = {
+            '@type': 'Pharmacy',
+            name: p.nom,
+            address: { '@type': 'PostalAddress', streetAddress: [p.quartier, p.adresse].filter(Boolean).join(', '), addressLocality: 'Agadir', addressCountry: 'MA' },
+          };
+          if (p.telephone) item.telephone = p.telephone;
+          if (p.lat != null && p.lng != null) item.geo = { '@type': 'GeoCoordinates', latitude: p.lat, longitude: p.lng };
+          return { '@type': 'ListItem', position: i + 1, item };
+        }),
+      },
+    ],
+  };
+  return `<script type="application/ld+json">${jsonSur(graph)}</script>`;
 }
 
 async function getAccessToken() {
@@ -388,8 +480,18 @@ async function main() {
   // Each page is published independently: a failure on one does not block the other.
   const targets = [
     { label: 'FR', blogId: BLOGGER_BLOG_ID, pageId: BLOGGER_PAGE_ID, fallbackTitle: FR_PAGE_TITLE, innerHtml: render(data), ldHtml: renderLd(data) },
-    { label: 'AR', blogId: AR_BLOG_ID, pageId: AR_PAGE_ID, fallbackTitle: AR_PAGE_TITLE, innerHtml: renderAr(data) },
+    { label: 'AR', blogId: AR_BLOG_ID, pageId: AR_PAGE_ID, fallbackTitle: AR_PAGE_TITLE, innerHtml: renderAr(data), ldHtml: renderLdAr(data) },
   ];
+
+  // Nearby cities: only pages that exist (real page id) and whose JSON file was generated.
+  for (const v of CFG_VILLES) {
+    if (!/^\d+$/.test(v.pageId) || !fs.existsSync(v.jsonPath)) continue;
+    const dv = JSON.parse(fs.readFileSync(v.jsonPath, 'utf8'));
+    targets.push({
+      label: v.label, blogId: BLOGGER_BLOG_ID, pageId: v.pageId, fallbackTitle: v.fallbackTitle,
+      innerHtml: render(dv, v.cfg), ldHtml: renderLd(dv, v.cfg),
+    });
+  }
 
   let failed = 0;
   for (const t of targets) {
