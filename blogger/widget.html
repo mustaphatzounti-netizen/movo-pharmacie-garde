@@ -45,13 +45,19 @@
 
 <script>
 (function () {
-  // \u00c0 adapter si le d\u00e9p\u00f4t change de propri\u00e9taire, de nom ou de branche.
-  var URL_DONNEES = 'https://raw.githubusercontent.com/mustaphatzounti-netizen/movo-pharmacie-garde/main/public/garde.json';
-  var URL_PAGE = 'https://www.agadir-livraison.com/p/pharmacie-de-garde-agadir.html';
-  var WHATSAPP_MOVO = '212605577990';
-
   var racine = document.getElementById('pg-garde');
   if (!racine) return;
+
+  // R\u00e9glages de la page : attributs data-* sur #pg-garde (pages Inezgane, A\u00eft Melloul...),
+  // sinon valeurs d'Agadir. \u00c0 adapter si le d\u00e9p\u00f4t change de propri\u00e9taire, de nom ou de branche.
+  function reglage(nom, defaut) { return racine.getAttribute('data-' + nom) || defaut; }
+  var URL_DONNEES = reglage('json', 'https://raw.githubusercontent.com/mustaphatzounti-netizen/movo-pharmacie-garde/main/public/garde.json');
+  var URL_PAGE = reglage('page', 'https://www.agadir-livraison.com/p/pharmacie-de-garde-agadir.html');
+  var VILLE = reglage('ville', 'Agadir');
+  var TITRE_AR = reglage('titre-ar', '\u0635\u064a\u062f\u0644\u064a\u0627\u062a \u0627\u0644\u062d\u0631\u0627\u0633\u0629 \u0628\u0623\u0643\u0627\u062f\u064a\u0631');
+  var SOURCES_TXT = reglage('sources', 'D\'apr\u00e8s Pharmacie en permanence et Annuaire Gratuit.');
+  var ATTENTE_TXT = reglage('attente', 'La liste de garde d\'aujourd\'hui n\'est pas encore mise \u00e0 jour. V\u00e9rifiez sur agadir.pharmacieenpermanence.ma ou appelez le 141 (SAMU) en cas d\'urgence.');
+  var WHATSAPP_MOVO = '212605577990';
   var etat = { pharmacies: [], resultats: null, info: null, trie: false };
 
   function el(tag, cls, texte) {
@@ -83,19 +89,19 @@
   }
 
   function lienCarte(p) {
-    var q = (p.lat != null && p.lng != null) ? p.lat + ',' + p.lng : [p.nom, p.adresse, p.quartier, 'Agadir'].filter(Boolean).join(', ');
+    var q = (p.lat != null && p.lng != null) ? p.lat + ',' + p.lng : [p.nom, p.adresse, p.quartier, VILLE].filter(Boolean).join(', ');
     return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
   }
 
   // Bouton WhatsApp MOVO : livraison depuis cette pharmacie de garde.
   function lienLivraison(p) {
     return 'https://wa.me/' + WHATSAPP_MOVO + '?text=' + encodeURIComponent(
-      'Bonjour MOVO, je voudrais me faire livrer un m\u00e9dicament depuis la ' + p.nom + ' (pharmacie de garde, Agadir).');
+      'Bonjour MOVO, je voudrais me faire livrer un m\u00e9dicament depuis la ' + p.nom + ' (pharmacie de garde, ' + VILLE + ').');
   }
 
   // Partage de la liste du jour sur WhatsApp.
   function lienPartage(pharmacies, date) {
-    var lignes = ['Pharmacies de garde \u00e0 Agadir \u2014 ' + dateLisible(date) + ' :'];
+    var lignes = ['Pharmacies de garde \u00e0 ' + VILLE + ' \u2014 ' + dateLisible(date) + ' :'];
     pharmacies.forEach(function (p) { lignes.push('\u2022 ' + p.nom + (p.telephone ? ' \u2014 ' + p.telephone : '')); });
     lignes.push('', 'Liste \u00e0 jour : ' + URL_PAGE);
     return 'https://wa.me/?text=' + encodeURIComponent(lignes.join('\n'));
@@ -145,7 +151,7 @@
 
   function listeParZone(pharmacies, parent) {
     var zones = {};
-    pharmacies.forEach(function (p) { (zones[p.zone || 'Agadir'] = zones[p.zone || 'Agadir'] || []).push(p); });
+    pharmacies.forEach(function (p) { (zones[p.zone || VILLE] = zones[p.zone || VILLE] || []).push(p); });
     var noms = Object.keys(zones);
     noms.forEach(function (z) {
       if (noms.length > 1) parent.appendChild(el('h3', 'pg-zone', z));
@@ -217,7 +223,7 @@
   // Titre H1 de la page avec la date du jour (seulement sur cette page : le script est dans son contenu).
   function titreDuJour(date) {
     var h1 = document.querySelector('.page-hero-copy h1, .page-hero h1, .entry-head h1, article h1');
-    if (h1) h1.textContent = 'Pharmacie de garde Agadir aujourd\'hui (24h/24) \u2014 ' + dateLisible(date);
+    if (h1) h1.textContent = 'Pharmacie de garde ' + VILLE + ' aujourd\'hui (24h/24) \u2014 ' + dateLisible(date);
   }
 
   function afficher(data) {
@@ -227,8 +233,8 @@
     data.jours.forEach(function (j) { parDate[j.date] = j.pharmacies; });
 
     racine.textContent = '';
-    racine.appendChild(el('h2', 'pg-titre', 'Pharmacies de garde \u00e0 ' + (data.ville || 'Agadir')));
-    racine.appendChild(el('p', 'pg-titre-ar', '\u0635\u064a\u062f\u0644\u064a\u0627\u062a \u0627\u0644\u062d\u0631\u0627\u0633\u0629 \u0628\u0623\u0643\u0627\u062f\u064a\u0631'));
+    racine.appendChild(el('h2', 'pg-titre', 'Pharmacies de garde \u00e0 ' + (data.ville || VILLE)));
+    racine.appendChild(el('p', 'pg-titre-ar', TITRE_AR));
     racine.appendChild(el('p', 'pg-periode', 'Garde du ' + dateLisible(aujourdhui) + '.'));
 
     if (data.exemple) {
@@ -246,8 +252,7 @@
       affichee = hier;
       dateAffichee = addDays(aujourdhui, -1);
     } else if (!liste || !liste.length) {
-      racine.appendChild(el('p', 'pg-alerte',
-        'La liste de garde d\'aujourd\'hui n\'est pas encore mise \u00e0 jour. V\u00e9rifiez sur agadir.pharmacieenpermanence.ma ou appelez le 141 (SAMU) en cas d\'urgence.'));
+      racine.appendChild(el('p', 'pg-alerte', ATTENTE_TXT));
     } else {
       affichee = liste;
     }
@@ -262,7 +267,7 @@
     }
 
     racine.appendChild(el('p', 'pg-maj',
-      'D\'apr\u00e8s Pharmacie en permanence et Annuaire Gratuit. Mis \u00e0 jour le ' + new Date(data.genere_le).toLocaleString('fr-FR', { timeZone: data.fuseau }) +
+      SOURCES_TXT + ' Mis \u00e0 jour le ' + new Date(data.genere_le).toLocaleString('fr-FR', { timeZone: data.fuseau }) +
       '. Appelez la pharmacie avant de vous d\u00e9placer.'));
     racine.appendChild(el('p', 'pg-urgence', 'Urgences : SAMU 141 \u00b7 Protection civile 150 \u00b7 Police 19'));
     titreDuJour(aujourdhui);
