@@ -22,6 +22,7 @@
   .pg-titre { margin: 0 0 4px; font-size: 1.35em; }
   .pg-titre-ar { margin: 0 0 12px; font-size: 1.15em; direction: rtl; opacity: .75; }
   .pg-periode, .pg-maj { opacity: .75; font-size: .92em; margin: 0 0 12px; }
+  .pg-resume { margin: 0 0 12px; }
   .pg-alerte { background: var(--pg-alerte); padding: 10px 12px; border-radius: 8px; margin: 0 0 12px; }
   .pg-outils { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 12px; }
   .pg-info { margin: 0 0 12px; font-size: .9em; opacity: .8; }
@@ -80,6 +81,15 @@
     return new Date(date + 'T12:00:00Z').toLocaleDateString('ar-MA-u-nu-latn', {
       weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC'
     });
+  }
+
+  // \u062c\u0645\u0644\u0629-\u062c\u0648\u0627\u0628 \u0627\u0644\u064a\u0648\u0645 (\u0646\u0641\u0633 \u0646\u0635 \u0627\u0644\u0644\u0627\u0626\u062d\u0629 \u0627\u0644\u062b\u0627\u0628\u062a\u0629 \u0627\u0644\u062a\u064a \u064a\u0646\u0634\u0631\u0647\u0627 GitHub Actions).
+  function resume(pharmacies, date) {
+    var n = pharmacies.length;
+    var tous24 = pharmacies.every(function (p) { return p.garde === '24h/24'; });
+    var noms = pharmacies.map(function (p) { return p.nom; });
+    var liste = noms.length > 1 ? noms.slice(0, -1).join('\u060c ') + ' \u0648' + noms[noms.length - 1] : (noms[0] || '');
+    return '\u0635\u064a\u062f\u0644\u064a\u0627\u062a \u0627\u0644\u062d\u0631\u0627\u0633\u0629 \u0641\u064a \u0623\u0643\u0627\u062f\u064a\u0631 \u0627\u0644\u064a\u0648\u0645\u060c ' + dateLisible(date) + ' ' + date.slice(0, 4) + '\u060c \u0639\u062f\u062f\u0647\u0627 ' + n + ': ' + liste + (tous24 ? '\u060c \u0643\u0644\u0647\u0627 \u0645\u0641\u062a\u0648\u062d\u0629 24/24' : '') + '.';
   }
 
   function lienCarte(p) {
@@ -240,6 +250,8 @@
     sousTitre.dir = 'ltr';
     racine.appendChild(sousTitre);
     racine.appendChild(el('p', 'pg-periode', '\u062d\u0631\u0627\u0633\u0629 \u064a\u0648\u0645 ' + dateLisible(aujourdhui) + '.'));
+    var listeDuJour = parDate[aujourdhui];
+    if (listeDuJour && listeDuJour.length) racine.appendChild(el('p', 'pg-resume', resume(listeDuJour, aujourdhui)));
 
     if (data.exemple) {
       racine.appendChild(el('p', 'pg-alerte', '\u0628\u064a\u0627\u0646\u0627\u062a \u062a\u062c\u0631\u064a\u0628\u064a\u0629: \u0627\u0644\u0644\u0627\u0626\u062d\u0629 \u0627\u0644\u062d\u0642\u064a\u0642\u064a\u0629 \u0644\u0644\u0635\u064a\u062f\u0644\u064a\u0627\u062a \u0644\u0645 \u062a\u064f\u062f\u062e\u0644 \u0628\u0639\u062f.'));
@@ -269,7 +281,7 @@
       dessinerListe();
     }
 
-    var maj = el('p', 'pg-maj', '\u062d\u0633\u0628 Pharmacie en permanence \u0648Annuaire Gratuit. \u0622\u062e\u0631 \u062a\u062d\u062f\u064a\u062b: ');
+    var maj = el('p', 'pg-maj', '\u062d\u0633\u0628 Telecontact \u0648Annuaire Gratuit \u0648Le Matin (\u0646\u0639\u0631\u0636 \u0641\u0642\u0637 \u0627\u0644\u0635\u064a\u062f\u0644\u064a\u0627\u062a \u0627\u0644\u062a\u064a \u064a\u0630\u0643\u0631\u0647\u0627 \u0645\u0635\u062f\u0631\u0627\u0646 \u0639\u0644\u0649 \u0627\u0644\u0623\u0642\u0644). \u0622\u062e\u0631 \u062a\u062d\u062f\u064a\u062b: ');
     var majDate = el('span', null, new Date(data.genere_le).toLocaleString('fr-FR', { timeZone: data.fuseau }));
     majDate.dir = 'ltr';
     maj.appendChild(majDate);

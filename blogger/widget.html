@@ -22,6 +22,7 @@
   .pg-titre { margin: 0 0 4px; font-size: 1.35em; }
   .pg-titre-ar { margin: 0 0 12px; font-size: 1.15em; direction: rtl; opacity: .75; }
   .pg-periode, .pg-maj { opacity: .75; font-size: .92em; margin: 0 0 12px; }
+  .pg-resume { margin: 0 0 12px; }
   .pg-alerte { background: var(--pg-alerte); padding: 10px 12px; border-radius: 8px; margin: 0 0 12px; }
   .pg-outils { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 12px; }
   .pg-info { margin: 0 0 12px; font-size: .9em; opacity: .8; }
@@ -55,7 +56,7 @@
   var URL_PAGE = reglage('page', 'https://www.agadir-livraison.com/p/pharmacie-de-garde-agadir.html');
   var VILLE = reglage('ville', 'Agadir');
   var TITRE_AR = reglage('titre-ar', '\u0635\u064a\u062f\u0644\u064a\u0627\u062a \u0627\u0644\u062d\u0631\u0627\u0633\u0629 \u0628\u0623\u0643\u0627\u062f\u064a\u0631');
-  var SOURCES_TXT = reglage('sources', 'D\'apr\u00e8s Pharmacie en permanence et Annuaire Gratuit.');
+  var SOURCES_TXT = reglage('sources', 'D\'apr\u00e8s Telecontact, Annuaire Gratuit et Le Matin : seules les pharmacies cit\u00e9es par au moins deux sources sont affich\u00e9es.');
   var ATTENTE_TXT = reglage('attente', 'La liste de garde d\'aujourd\'hui n\'est pas encore mise \u00e0 jour. V\u00e9rifiez sur agadir.pharmacieenpermanence.ma ou appelez le 141 (SAMU) en cas d\'urgence.');
   var TITRE_H1 = reglage('h1', 'Pharmacie de garde Agadir aujourd\'hui (24h/24)');
   var WHATSAPP_MOVO = '212605577990';
@@ -87,6 +88,27 @@
     return new Date(date + 'T12:00:00Z').toLocaleDateString('fr-FR', {
       weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC'
     });
+  }
+
+  // Phrase-r\u00e9ponse du jour (m\u00eame texte que la liste statique publi\u00e9e par GitHub Actions).
+  function listeNoms(noms, et) {
+    return noms.length > 1 ? noms.slice(0, -1).join(', ') + ' ' + et + ' ' + noms[noms.length - 1] : (noms[0] || '');
+  }
+
+  function resume(pharmacies, date) {
+    var n = pharmacies.length, t = {};
+    pharmacies.forEach(function (p) { t[p.garde || ''] = (t[p.garde || ''] || 0) + 1; });
+    var fin = '';
+    if (t['24h/24'] === n) fin = n > 1 ? ', toutes ouvertes 24h/24' : ', ouverte 24h/24';
+    else {
+      var parts = [];
+      if (t['24h/24']) parts.push(t['24h/24'] + ' ouverte' + (t['24h/24'] > 1 ? 's' : '') + ' 24h/24');
+      if (t.Jour) parts.push(t.Jour + ' de jour');
+      if (t.Nuit) parts.push(t.Nuit + ' de nuit');
+      if (parts.length) fin = ' (' + parts.join(', ') + ')';
+    }
+    return 'Aujourd\'hui, ' + dateLisible(date) + ' ' + date.slice(0, 4) + ', ' + n + ' pharmacie' + (n > 1 ? 's sont' : ' est') +
+      ' de garde \u00e0 ' + VILLE + ' : ' + listeNoms(pharmacies.map(function (p) { return p.nom; }), 'et') + fin + '.';
   }
 
   function lienCarte(p) {
@@ -237,6 +259,8 @@
     racine.appendChild(el('h2', 'pg-titre', 'Pharmacies de garde \u00e0 ' + (data.ville || VILLE)));
     racine.appendChild(el('p', 'pg-titre-ar', TITRE_AR));
     racine.appendChild(el('p', 'pg-periode', 'Garde du ' + dateLisible(aujourdhui) + '.'));
+    var listeDuJour = parDate[aujourdhui];
+    if (listeDuJour && listeDuJour.length) racine.appendChild(el('p', 'pg-resume', resume(listeDuJour, aujourdhui)));
 
     if (data.exemple) {
       racine.appendChild(el('p', 'pg-alerte',
