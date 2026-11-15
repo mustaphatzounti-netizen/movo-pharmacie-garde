@@ -1,7 +1,7 @@
 {
   "ville": "Inezgane",
   "exemple": false,
-  "genere_le": "2026-11-15T00:52:20.271Z",
+  "genere_le": "2026-11-15T11:11:57.319Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
   "aujourdhui": "2026-11-15",
@@ -25,7 +25,7 @@
           "lng": -9.557247
         },
         {
-          "id": "deshopitaux",
+          "id": "hopitaux",
           "nom": "Pharmacie des Hopitaux",
           "zone": "Inezgane",
           "quartier": "",

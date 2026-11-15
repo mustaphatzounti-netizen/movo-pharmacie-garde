@@ -1,7 +1,7 @@
 {
   "ville": "Agadir",
   "exemple": false,
-  "genere_le": "2026-11-15T00:32:03.760Z",
+  "genere_le": "2026-11-15T11:11:56.235Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
   "aujourdhui": "2026-11-15",
@@ -289,6 +289,17 @@
           "lng": -9.568404
         },
         {
+          "id": "aloumahate",
+          "nom": "Pharmacie Al Oumahate",
+          "zone": "Agadir",
+          "quartier": "",
+          "adresse": "N°815 Quartier Lagouira, Bd Haj Lahbib, A Coté Du Panneau Stop, A L'intersection Du Quartier Najah Et Quartier Lagouira",
+          "telephone": null,
+          "garde": "Jour",
+          "lat": null,
+          "lng": null
+        },
+        {
           "id": "assafar",
           "nom": "Pharmacie Assafar",
           "zone": "Agadir",
@@ -311,7 +322,7 @@
           "lng": -9.558833
         },
         {
-          "id": "detalborjt",
+          "id": "talborjt",
           "nom": "Pharmacie de Talborjt",
           "zone": "Agadir",
           "quartier": "",
