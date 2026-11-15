@@ -1,7 +1,7 @@
 {
   "ville": "Agadir",
   "exemple": false,
-  "genere_le": "2026-11-15T11:11:56.235Z",
+  "genere_le": "2026-11-15T12:00:55.766Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
   "aujourdhui": "2026-11-15",
@@ -295,7 +295,7 @@
           "quartier": "",
           "adresse": "N°815 Quartier Lagouira, Bd Haj Lahbib, A Coté Du Panneau Stop, A L'intersection Du Quartier Najah Et Quartier Lagouira",
           "telephone": null,
-          "garde": "Jour",
+          "garde": "24h/24",
           "lat": null,
           "lng": null
         },
