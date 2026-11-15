@@ -19,8 +19,24 @@ const SORTIE = new URL('../public/garde.json', import.meta.url);
 const MOIS = { janvier: 1, fevrier: 2, mars: 3, avril: 4, mai: 5, juin: 6, juillet: 7, aout: 8, septembre: 9, octobre: 10, novembre: 11, decembre: 12 };
 
 const sansAccents = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
-const propre = (s) => (s || '').replace(/\s+/g, ' ').trim().replace(/\s+,/g, ',');
-export const cle = (nom) => sansAccents(nom).toLowerCase().replace(/\bpharmacie\b/g, '').replace(/[^a-z0-9]/g, '');
+// Certaines sources (ex. lematin.ma) écrivent des noms avec des lettres cyrilliques ou grecques
+// qui ressemblent aux lettres latines (« AL OUMАНАТЕ »). Sans correction, la même pharmacie n'est
+// pas reconnue d'une source à l'autre et elle est écartée à tort.
+const SOSIES = {
+  'А': 'A', 'В': 'B', 'Е': 'E', 'К': 'K', 'М': 'M', 'Н': 'H', 'О': 'O', 'Р': 'P', 'С': 'C', 'Т': 'T', 'У': 'Y', 'Х': 'X',
+  'а': 'a', 'в': 'b', 'е': 'e', 'к': 'k', 'м': 'm', 'н': 'h', 'о': 'o', 'р': 'p', 'с': 'c', 'т': 't', 'у': 'y', 'х': 'x',
+  'І': 'I', 'і': 'i', 'Ј': 'J', 'ј': 'j', 'Ѕ': 'S', 'ѕ': 's', 'Ү': 'Y', 'ү': 'y',
+  'Α': 'A', 'Β': 'B', 'Ε': 'E', 'Ζ': 'Z', 'Η': 'H', 'Ι': 'I', 'Κ': 'K', 'Μ': 'M', 'Ν': 'N', 'Ο': 'O', 'Ρ': 'P', 'Τ': 'T', 'Υ': 'Y', 'Χ': 'X',
+  'ο': 'o', 'ν': 'v', 'ι': 'i', 'κ': 'k', 'τ': 't', 'υ': 'u', 'ρ': 'p', 'α': 'a',
+};
+export const latin = (s) => String(s || '').replace(/[\u0370-\u03ff\u0400-\u04ff]/g, (c) => SOSIES[c] || c);
+const propre = (s) => latin(s).replace(/\s+/g, ' ').trim().replace(/\s+,/g, ',');
+// Clé de comparaison : sans accents, sans le mot « pharmacie » ni un « de / du / des / d' » qui le suit
+// (« Pharmacie de Talborjt » = « Pharmacie Talborjt »), seulement lettres et chiffres.
+export const cle = (nom) => sansAccents(latin(nom)).toLowerCase()
+  .replace(/\bpharmacie\b/g, ' ').trim()
+  .replace(/^(de|du|des)\s+|^d['’]\s*/, '')
+  .replace(/[^a-z0-9]/g, '');
 const titreAdresse = (s) => s.replace(/(^|[\s,(-])([a-zà-ÿ])/g, (m, a, b) => a + b.toUpperCase());
 
 export function dateFr(texte) {

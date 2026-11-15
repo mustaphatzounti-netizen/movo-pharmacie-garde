@@ -39,3 +39,11 @@ test('le fichier de la ville garde 2 jours précédents et met la ville comme zo
   assert.equal(s.jours[2].pharmacies[0].zone, 'Inezgane');
   assert.equal(s.heure_bascule, '00:00');
 });
+
+test('même pharmacie reconnue malgré les lettres cyrilliques et le « de »', async () => {
+  const { cle } = await import('./scrape.mjs');
+  assert.equal(cle('Pharmacie AL OUMАНАТЕ'), cle('Pharmacie Al Oumahate'));
+  assert.equal(cle('Pharmacie Talborjt'), cle('Pharmacie de Talborjt'));
+  assert.equal(cle('Pharmacie Des Hopitaux'), cle('Pharmacie des Hopitaux'));
+  assert.notEqual(cle('Pharmacie Anza'), cle('Pharmacie Arrahma'));
+});
