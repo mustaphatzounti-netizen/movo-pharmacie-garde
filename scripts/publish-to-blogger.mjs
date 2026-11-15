@@ -51,9 +51,9 @@ const CFG_AGADIR = {
 const CFG_VILLES = [
   {
     label: 'FR-INEZGANE',
-    pageId: '__INEZGANE_PAGE_ID__',
+    pageId: '553793497194857918',
     jsonPath: 'public/garde-inezgane.json',
-    fallbackTitle: "Pharmacie de garde Inezgane aujourd'hui (24h/24) — liste du jour | MOVO",
+    fallbackTitle: "Pharmacie de garde Inezgane aujourd'hui — liste du jour | MOVO",
     cfg: {
       url: 'https://www.agadir-livraison.com/p/pharmacie-de-garde-inezgane.html',
       ville: 'Inezgane',
@@ -64,9 +64,9 @@ const CFG_VILLES = [
   },
   {
     label: 'FR-AIT-MELLOUL',
-    pageId: '__AIT_MELLOUL_PAGE_ID__',
+    pageId: '2590725670696039709',
     jsonPath: 'public/garde-ait-melloul.json',
-    fallbackTitle: "Pharmacie de garde Aït Melloul aujourd'hui (24h/24) — liste du jour | MOVO",
+    fallbackTitle: "Pharmacie de garde Aït Melloul aujourd'hui — liste du jour | MOVO",
     cfg: {
       url: 'https://www.agadir-livraison.com/p/pharmacie-de-garde-ait-melloul.html',
       ville: 'Aït Melloul',
