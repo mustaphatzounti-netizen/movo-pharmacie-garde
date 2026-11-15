@@ -33,6 +33,11 @@ const BLOGGER_BLOG_ID = '8452204387409245713';   // MOVO (FR) blog — do not ch
 const BLOGGER_PAGE_ID = '8499368874513364589';    // /p/pharmacie-de-garde-agadir.html — do not change
 const START_MARKER = '<!--PG:START-->';
 const END_MARKER = '<!--PG:END-->';
+// Optional second pair, outside #pg-garde, for the daily JSON-LD (FR page only).
+const LD_START_MARKER = '<!--PG:LD:START-->';
+const LD_END_MARKER = '<!--PG:LD:END-->';
+const FR_PAGE_URL = 'https://www.agadir-livraison.com/p/pharmacie-de-garde-agadir.html';
+const WHATSAPP_MOVO = '212605577990';
 
 // Arabic site (ar.agadir-livraison.com) — same static list, Arabic labels.
 const AR_BLOG_ID = '6023995067592991740'; // ليفرور أكادير MOVO (AR) blog — do not change
@@ -85,44 +90,81 @@ function lienCarte(p) {
   return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
 }
 
+// WhatsApp MOVO : livraison depuis cette pharmacie de garde (same text as the client widget).
+function lienLivraison(p) {
+  return `https://wa.me/${WHATSAPP_MOVO}?text=` + encodeURIComponent(
+    `Bonjour MOVO, je voudrais me faire livrer un médicament depuis la ${p.nom} (pharmacie de garde, Agadir).`);
+}
+
+// Share today's list on WhatsApp (same text as the client widget).
+function lienPartage(pharmacies, date) {
+  const lignes = [`Pharmacies de garde à Agadir — ${dateLisible(date)} :`];
+  pharmacies.forEach((p) => { lignes.push('• ' + p.nom + (p.telephone ? ' — ' + p.telephone : '')); });
+  lignes.push('', 'Liste à jour : ' + FR_PAGE_URL);
+  return 'https://wa.me/?text=' + encodeURIComponent(lignes.join('\n'));
+}
+
 function carte(p) {
   const adr = [p.quartier, p.adresse].filter(Boolean).join(' — ');
   const telBtn = p.telephone
     ? `<a class="pg-btn pg-btn-tel" href="tel:${esc(p.telephone.replace(/\s+/g, ''))}">📞 ${esc(p.telephone)}</a>`
     : '';
   const mapBtn = `<a class="pg-btn pg-btn-carte" href="${esc(lienCarte(p))}" target="_blank" rel="noopener">Itinéraire</a>`;
+  const livrerBtn = `<a class="pg-btn pg-btn-livrer" href="${esc(lienLivraison(p))}" target="_blank" rel="noopener">🛵 Me faire livrer</a>`;
   return (
     `<li class="pg-carte">` +
       `<h3 class="pg-nom">${esc(p.nom)}</h3>` +
       `<p class="pg-adr">${esc(adr)}</p>` +
       (p.garde ? `<p class="pg-type">Garde ${esc(p.garde)}</p>` : '') +
-      `<div class="pg-actions">${telBtn}${mapBtn}</div>` +
+      `<div class="pg-actions">${telBtn}${mapBtn}${livrerBtn}</div>` +
     `</li>`
   );
 }
 
+// Zone headings only when there is more than one zone (same as the client widget).
 function listeParZone(pharmacies) {
   const zones = {};
   pharmacies.forEach((p) => {
     const z = p.zone || 'Agadir';
     (zones[z] = zones[z] || []).push(p);
   });
-  return Object.keys(zones).map((z) => {
+  const noms = Object.keys(zones);
+  return noms.map((z) => {
     const items = zones[z].map(carte).join('');
-    return `<h3 class="pg-zone">${esc(z)}</h3><ul class="pg-liste">${items}</ul>`;
+    return (noms.length > 1 ? `<h3 class="pg-zone">${esc(z)}</h3>` : '') + `<ul class="pg-liste">${items}</ul>`;
   }).join('');
 }
 
-// Mirrors the client-side afficher() function exactly, but returns an HTML
-// string instead of manipulating the DOM.
-function render(data) {
+// Tool bar above the list: nearest pharmacy (handled by the client script) + WhatsApp share.
+function outils(pharmacies, date) {
+  return (
+    `<div class="pg-outils">` +
+      `<button type="button" class="pg-btn pg-btn-proche">📍 La plus proche de moi</button>` +
+      `<a class="pg-btn pg-btn-wa" href="${esc(lienPartage(pharmacies, date))}" target="_blank" rel="noopener">Envoyer la liste sur WhatsApp</a>` +
+    `</div>` +
+    `<p class="pg-info" hidden></p>`
+  );
+}
+
+// Which list is shown: today's, or yesterday's as a morning fallback.
+function listeDuJour(data) {
   const maintenant = localParts(data.fuseau);
   const aujourdhui = maintenant.heure < data.heure_bascule
     ? addDays(maintenant.date, -1)
     : maintenant.date;
-
   const parDate = {};
   (data.jours || []).forEach((j) => { parDate[j.date] = j.pharmacies; });
+  const liste = parDate[aujourdhui];
+  const hier = parDate[addDays(aujourdhui, -1)];
+  if (liste && liste.length) return { aujourdhui, pharmacies: liste, date: aujourdhui, veille: false };
+  if (hier && hier.length) return { aujourdhui, pharmacies: hier, date: addDays(aujourdhui, -1), veille: true };
+  return { aujourdhui, pharmacies: null, date: aujourdhui, veille: false };
+}
+
+// Mirrors the client-side afficher() function exactly (initial state, before
+// "nearest pharmacy" sorting), but returns an HTML string instead of manipulating the DOM.
+function render(data) {
+  const { aujourdhui, pharmacies, date, veille } = listeDuJour(data);
 
   let out = '';
   out += `<h2 class="pg-titre">Pharmacies de garde à ${esc(data.ville || 'Agadir')}</h2>`;
@@ -133,16 +175,14 @@ function render(data) {
     out += `<p class="pg-alerte">Données d'exemple : la liste réelle des pharmacies n'a pas encore été saisie.</p>`;
   }
 
-  const liste = parDate[aujourdhui];
-  const hier = parDate[addDays(aujourdhui, -1)];
-
-  if ((!liste || !liste.length) && hier && hier.length) {
-    out += `<p class="pg-alerte">La liste d'aujourd'hui n'est pas encore publiée : voici la garde d'hier (${esc(dateLisible(addDays(aujourdhui, -1)))}), souvent encore valable le matin. Appelez la pharmacie avant de vous déplacer.</p>`;
-    out += listeParZone(hier);
-  } else if (!liste || !liste.length) {
+  if (pharmacies && veille) {
+    out += `<p class="pg-alerte">La liste d'aujourd'hui n'est pas encore publiée : voici la garde d'hier (${esc(dateLisible(date))}), souvent encore valable le matin. Appelez la pharmacie avant de vous déplacer.</p>`;
+  } else if (!pharmacies) {
     out += `<p class="pg-alerte">La liste de garde d'aujourd'hui n'est pas encore mise à jour. Vérifiez sur agadir.pharmacieenpermanence.ma ou appelez le 141 (SAMU) en cas d'urgence.</p>`;
-  } else {
-    out += listeParZone(liste);
+  }
+  if (pharmacies) {
+    out += outils(pharmacies, date);
+    out += `<div class="pg-resultats">${listeParZone(pharmacies)}</div>`;
   }
 
   const majTxt = new Date(data.genere_le).toLocaleString('fr-FR', { timeZone: data.fuseau });
@@ -150,6 +190,53 @@ function render(data) {
   out += `<p class="pg-urgence">Urgences : SAMU 141 · Protection civile 150 · Police 19</p>`;
 
   return out;
+}
+
+// JSON-LD for the FR page only: the list shown today as an ItemList of Pharmacy,
+// merged (same @id) with the WebPage node the Blogger theme already outputs,
+// plus a daily dateModified. Written between PG:LD markers, OUTSIDE #pg-garde,
+// so the client script (which re-renders #pg-garde) never removes it.
+function renderLd(data) {
+  const { pharmacies, date } = listeDuJour(data);
+  if (!pharmacies) return '';
+  const listeId = `${FR_PAGE_URL}#garde-du-jour`;
+  const graph = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${FR_PAGE_URL}#webpage`,
+        dateModified: data.genere_le,
+        mainEntity: { '@id': listeId },
+      },
+      {
+        '@type': 'ItemList',
+        '@id': listeId,
+        name: `Pharmacies de garde à Agadir — ${dateLisible(date)}`,
+        itemListOrder: 'https://schema.org/ItemListUnordered',
+        numberOfItems: pharmacies.length,
+        itemListElement: pharmacies.map((p, i) => {
+          const item = {
+            '@type': 'Pharmacy',
+            name: p.nom,
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: [p.quartier, p.adresse].filter(Boolean).join(', '),
+              addressLocality: 'Agadir',
+              addressCountry: 'MA',
+            },
+          };
+          if (p.telephone) item.telephone = p.telephone;
+          if (p.lat != null && p.lng != null) item.geo = { '@type': 'GeoCoordinates', latitude: p.lat, longitude: p.lng };
+          if (p.garde) item.description = `Pharmacie de garde ${p.garde} à Agadir le ${dateLisible(date)}.`;
+          return { '@type': 'ListItem', position: i + 1, item };
+        }),
+      },
+    ],
+  };
+  const json = JSON.stringify(graph)
+    .replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
+  return `<script type="application/ld+json">${json}</script>`;
 }
 
 
@@ -244,7 +331,15 @@ async function getAccessToken() {
   return json.access_token;
 }
 
-async function publishPage(token, { label, blogId, pageId, fallbackTitle, innerHtml }) {
+// Replaces what is between two markers; returns null if the markers are missing.
+function splice(html, startMarker, endMarker, inner) {
+  const si = html.indexOf(startMarker);
+  const ei = html.indexOf(endMarker, si + startMarker.length);
+  if (si === -1 || ei === -1) return null;
+  return html.slice(0, si + startMarker.length) + inner + html.slice(ei);
+}
+
+async function publishPage(token, { label, blogId, pageId, fallbackTitle, innerHtml, ldHtml }) {
   const api = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/pages/${pageId}`;
 
   const getRes = await fetch(api, { headers: { Authorization: `Bearer ${token}` } });
@@ -252,16 +347,19 @@ async function publishPage(token, { label, blogId, pageId, fallbackTitle, innerH
   const page = await getRes.json();
 
   const html = page.content;
-  const si = html.indexOf(START_MARKER);
-  const ei = html.indexOf(END_MARKER);
-  if (si === -1 || ei === -1 || ei < si) {
+  let newHtml = splice(html, START_MARKER, END_MARKER, innerHtml);
+  if (newHtml === null) {
     throw new Error(
       `Markers ${START_MARKER} / ${END_MARKER} not found in the Blogger page content. ` +
       `Run the one-time setup edit in the Blogger HTML editor first (see README).`
     );
   }
 
-  const newHtml = html.slice(0, si + START_MARKER.length) + innerHtml + html.slice(ei);
+  if (ldHtml != null) {
+    const withLd = splice(newHtml, LD_START_MARKER, LD_END_MARKER, ldHtml);
+    if (withLd === null) console.warn(`[${label}] JSON-LD markers not found — list published without JSON-LD.`);
+    else newHtml = withLd;
+  }
 
   if (newHtml === html) {
     console.log(`[${label}] No change since last run — skipping Blogger update.`);
@@ -287,7 +385,7 @@ async function main() {
 
   // Each page is published independently: a failure on one does not block the other.
   const targets = [
-    { label: 'FR', blogId: BLOGGER_BLOG_ID, pageId: BLOGGER_PAGE_ID, fallbackTitle: FR_PAGE_TITLE, innerHtml: render(data) },
+    { label: 'FR', blogId: BLOGGER_BLOG_ID, pageId: BLOGGER_PAGE_ID, fallbackTitle: FR_PAGE_TITLE, innerHtml: render(data), ldHtml: renderLd(data) },
     { label: 'AR', blogId: AR_BLOG_ID, pageId: AR_PAGE_ID, fallbackTitle: AR_PAGE_TITLE, innerHtml: renderAr(data) },
   ];
 
