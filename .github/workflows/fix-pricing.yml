@@ -1,0 +1,43 @@
+name: Prix par zone (maintenance)
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run (rapport seulement) ou apply (modifier les pages)'
+        required: true
+        default: 'dry-run'
+        type: choice
+        options:
+          - dry-run
+          - apply
+
+permissions:
+  contents: read
+
+jobs:
+  fix-pricing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Remplacer « selon la distance » par la zone de départ / de livraison
+        env:
+          BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+          BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+          BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+          MODE: ${{ inputs.mode }}
+        run: node scripts/fix-pricing-wording.mjs
+
+      - name: Sauvegarde du contenu original
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pricing-backup-${{ inputs.mode }}
+          path: backup/pricing-backup.json
+          if-no-files-found: ignore
+          retention-days: 90
