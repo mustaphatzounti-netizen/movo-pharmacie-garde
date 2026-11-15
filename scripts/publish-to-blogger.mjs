@@ -46,7 +46,7 @@ const CFG_AGADIR = {
   ville: 'Agadir',
   titreAr: 'صيدليات الحراسة بأكادير',
   attenteTxt: "La liste de garde d'aujourd'hui n'est pas encore mise à jour. Vérifiez sur agadir.pharmacieenpermanence.ma ou appelez le 141 (SAMU) en cas d'urgence.",
-  sourcesTxt: "D'après Pharmacie en permanence et Annuaire Gratuit.",
+  sourcesTxt: "D'après Telecontact, Annuaire Gratuit et Le Matin : seules les pharmacies citées par au moins deux sources sont affichées.",
 };
 const CFG_VILLES = [
   {
@@ -119,6 +119,35 @@ function dateLisible(date) {
   return new Date(date + 'T12:00:00Z').toLocaleDateString('fr-FR', {
     weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC',
   });
+}
+
+// Phrase-réponse du jour (pour Google et les assistants IA) : même texte que dans les widgets.
+function listeNoms(noms, et) {
+  return noms.length > 1 ? noms.slice(0, -1).join(', ') + ' ' + et + ' ' + noms[noms.length - 1] : (noms[0] || '');
+}
+
+function resume(pharmacies, date, ville) {
+  const n = pharmacies.length;
+  const t = {};
+  pharmacies.forEach((p) => { t[p.garde || ''] = (t[p.garde || ''] || 0) + 1; });
+  let fin = '';
+  if (t['24h/24'] === n) fin = n > 1 ? ', toutes ouvertes 24h/24' : ', ouverte 24h/24';
+  else {
+    const parts = [];
+    if (t['24h/24']) parts.push(t['24h/24'] + ' ouverte' + (t['24h/24'] > 1 ? 's' : '') + ' 24h/24');
+    if (t.Jour) parts.push(t.Jour + ' de jour');
+    if (t.Nuit) parts.push(t.Nuit + ' de nuit');
+    if (parts.length) fin = ' (' + parts.join(', ') + ')';
+  }
+  return `Aujourd'hui, ${dateLisible(date)} ${date.slice(0, 4)}, ${n} pharmacie${n > 1 ? 's sont' : ' est'} de garde à ${ville} : ${listeNoms(pharmacies.map((p) => p.nom), 'et')}${fin}.`;
+}
+
+function resumeAr(pharmacies, date) {
+  const n = pharmacies.length;
+  const tous24 = pharmacies.every((p) => p.garde === '24h/24');
+  const noms = pharmacies.map((p) => p.nom);
+  const liste = noms.length > 1 ? noms.slice(0, -1).join('، ') + ' و' + noms[noms.length - 1] : (noms[0] || '');
+  return `صيدليات الحراسة في أكادير اليوم، ${dateLisibleAr(date)} ${date.slice(0, 4)}، عددها ${n}: ${liste}${tous24 ? '، كلها مفتوحة 24/24' : ''}.`;
 }
 
 function lienCarte(p, ville = 'Agadir') {
@@ -208,6 +237,7 @@ function render(data, cfg = CFG_AGADIR) {
   out += `<h2 class="pg-titre">Pharmacies de garde à ${esc(data.ville || cfg.ville)}</h2>`;
   out += `<p class="pg-titre-ar">${esc(cfg.titreAr)}</p>`;
   out += `<p class="pg-periode">Garde du ${esc(dateLisible(aujourdhui))}.</p>`;
+  if (pharmacies && !veille) out += `<p class="pg-resume">${esc(resume(pharmacies, date, data.ville || cfg.ville))}</p>`;
 
   if (data.exemple) {
     out += `<p class="pg-alerte">Données d'exemple : la liste réelle des pharmacies n'a pas encore été saisie.</p>`;
@@ -352,6 +382,7 @@ function renderAr(data) {
   out += `<h2 class="pg-titre">صيدليات الحراسة في أكادير اليوم</h2>`;
   out += `<p class="pg-titre-ar" lang="fr" dir="ltr">Pharmacies de garde Agadir</p>`;
   out += `<p class="pg-periode">حراسة يوم ${esc(dateLisibleAr(aujourdhui))}.</p>`;
+  if (pharmacies && !veille) out += `<p class="pg-resume">${esc(resumeAr(pharmacies, date))}</p>`;
 
   if (data.exemple) {
     out += `<p class="pg-alerte">بيانات تجريبية: اللائحة الحقيقية للصيدليات لم تُدخل بعد.</p>`;
@@ -368,7 +399,7 @@ function renderAr(data) {
   }
 
   const majTxt = new Date(data.genere_le).toLocaleString('fr-FR', { timeZone: data.fuseau });
-  out += `<p class="pg-maj">حسب Pharmacie en permanence وAnnuaire Gratuit. آخر تحديث: <span dir="ltr">${esc(majTxt)}</span>. اتصل بالصيدلية قبل أن تتنقل.</p>`;
+  out += `<p class="pg-maj">حسب Telecontact وAnnuaire Gratuit وLe Matin (نعرض فقط الصيدليات التي يذكرها مصدران على الأقل). آخر تحديث: <span dir="ltr">${esc(majTxt)}</span>. اتصل بالصيدلية قبل أن تتنقل.</p>`;
   out += `<p class="pg-urgence">الطوارئ: الإسعاف 141 · الوقاية المدنية 150 · الشرطة 19</p>`;
 
   return out;

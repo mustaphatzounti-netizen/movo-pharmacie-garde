@@ -94,7 +94,9 @@ export function parseAg(html) {
       nom: propre($l.find('[itemprop="name"]').first().text() || $l.find('.ag_pharmacy_card_title').first().text()),
       adresse: propre($l.find('[itemprop="streetAddress"]').first().text()),
       quartier: infos.Quartier || '',
-      garde: infos.Garde || '',
+      // « Ouvert 24h/24 » est écrit dans la carte même quand il n'y a pas de ligne « Garde ».
+      garde: infos.Garde || (/24\s*h\s*\/\s*24|jour et nuit/i.test($l.text()) ? '24h/24'
+        : /garde de nuit/i.test($l.text()) ? 'nuit' : /garde de jour/i.test($l.text()) ? 'jour' : ''),
     };
   }).get().filter((p) => p.nom);
   return { date, pharmacies };
