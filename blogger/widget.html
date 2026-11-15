@@ -57,6 +57,7 @@
   var TITRE_AR = reglage('titre-ar', '\u0635\u064a\u062f\u0644\u064a\u0627\u062a \u0627\u0644\u062d\u0631\u0627\u0633\u0629 \u0628\u0623\u0643\u0627\u062f\u064a\u0631');
   var SOURCES_TXT = reglage('sources', 'D\'apr\u00e8s Pharmacie en permanence et Annuaire Gratuit.');
   var ATTENTE_TXT = reglage('attente', 'La liste de garde d\'aujourd\'hui n\'est pas encore mise \u00e0 jour. V\u00e9rifiez sur agadir.pharmacieenpermanence.ma ou appelez le 141 (SAMU) en cas d\'urgence.');
+  var TITRE_H1 = reglage('h1', 'Pharmacie de garde Agadir aujourd\'hui (24h/24)');
   var WHATSAPP_MOVO = '212605577990';
   var etat = { pharmacies: [], resultats: null, info: null, trie: false };
 
@@ -223,7 +224,7 @@
   // Titre H1 de la page avec la date du jour (seulement sur cette page : le script est dans son contenu).
   function titreDuJour(date) {
     var h1 = document.querySelector('.page-hero-copy h1, .page-hero h1, .entry-head h1, article h1');
-    if (h1) h1.textContent = 'Pharmacie de garde ' + VILLE + ' aujourd\'hui (24h/24) \u2014 ' + dateLisible(date);
+    if (h1) h1.textContent = TITRE_H1 + ' \u2014 ' + dateLisible(date);
   }
 
   function afficher(data) {
