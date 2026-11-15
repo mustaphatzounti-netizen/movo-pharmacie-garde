@@ -3,16 +3,19 @@
   Coller tout ce bloc dans la page, en mode « Vue HTML » (pas « Vue composition »).
   Les données viennent de public/garde.json, mis à jour chaque matin par GitHub Actions
   à partir de pharmacieenpermanence.ma et annuaire-gratuit.ma (recoupés). Coller une seule fois.
+  Les marqueurs PG:START/PG:END (liste statique) et PG:LD:START/PG:LD:END (JSON-LD ItemList)
+  sont remplis chaque jour par scripts/publish-to-blogger.mjs : ne pas les supprimer.
 -->
 <div id="pg-garde" class="pg" lang="fr">
-  <p class="pg-etat">Chargement des pharmacies de garde…</p>
+<!--PG:START--><p class="pg-etat">Chargement des pharmacies de garde…</p><!--PG:END-->
 </div>
+<!--PG:LD:START--><!--PG:LD:END-->
 
 <style>
   /* Couleurs neutres et semi-transparentes : le widget hérite du texte et du fond du thème Blogger. */
   .pg {
     --pg-carte: rgba(127, 127, 127, .09); --pg-accent: #0a7d4f; --pg-accent-texte: #ffffff;
-    --pg-alerte: rgba(240, 180, 0, .18);
+    --pg-alerte: rgba(240, 180, 0, .18); --pg-wa: #25D366; --pg-wa-texte: #0B2D48;
     font-family: inherit; color: inherit; max-width: 760px; margin: 0 auto; line-height: 1.45;
   }
   .pg * { box-sizing: border-box; }
@@ -20,16 +23,21 @@
   .pg-titre-ar { margin: 0 0 12px; font-size: 1.15em; direction: rtl; opacity: .75; }
   .pg-periode, .pg-maj { opacity: .75; font-size: .92em; margin: 0 0 12px; }
   .pg-alerte { background: var(--pg-alerte); padding: 10px 12px; border-radius: 8px; margin: 0 0 12px; }
+  .pg-outils { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 12px; }
+  .pg-info { margin: 0 0 12px; font-size: .9em; opacity: .8; }
   .pg-zone { margin: 18px 0 8px; font-size: 1.05em; }
   .pg-liste { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); padding: 0; margin: 0; list-style: none; }
   .pg-carte { background: var(--pg-carte); border-radius: 10px; padding: 12px 14px; }
+  .pg-proche { box-shadow: inset 0 0 0 2px var(--pg-accent); }
+  .pg-dist { margin: 0 0 4px; font-size: .85em; font-weight: 700; color: var(--pg-accent); }
   .pg-nom { margin: 0 0 4px; font-size: 1.05em; }
   .pg-type { margin: -6px 0 10px; font-size: .85em; font-weight: 600; color: var(--pg-accent); }
   .pg-adr { margin: 0 0 10px; opacity: .75; font-size: .93em; }
   .pg-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .pg-btn { display: inline-block; padding: 7px 12px; border-radius: 6px; text-decoration: none !important; font-size: .93em; font-weight: 600; }
-  .pg-btn-tel { background: var(--pg-accent); color: var(--pg-accent-texte) !important; }
-  .pg-btn-carte { border: 1px solid var(--pg-accent); color: var(--pg-accent) !important; }
+  .pg-btn { display: inline-block; padding: 7px 12px; border-radius: 6px; border: 0; text-decoration: none !important; font-family: inherit; font-size: .93em; font-weight: 600; line-height: 1.45; cursor: pointer; }
+  .pg-btn-tel, .pg-btn-proche { background: var(--pg-accent); color: var(--pg-accent-texte) !important; }
+  .pg-btn-carte { border: 1px solid var(--pg-accent); color: var(--pg-accent) !important; background: transparent; }
+  .pg-btn-wa, .pg-btn-livrer { background: var(--pg-wa); color: var(--pg-wa-texte) !important; }
   .pg-demain { margin: 22px 0 14px; }
   .pg-demain summary { cursor: pointer; font-weight: 600; }
   .pg-urgence { margin-top: 20px; font-size: .92em; opacity: .75; }
@@ -39,8 +47,12 @@
 (function () {
   // À adapter si le dépôt change de propriétaire, de nom ou de branche.
   var URL_DONNEES = 'https://raw.githubusercontent.com/mustaphatzounti-netizen/movo-pharmacie-garde/main/public/garde.json';
+  var URL_PAGE = 'https://www.agadir-livraison.com/p/pharmacie-de-garde-agadir.html';
+  var WHATSAPP_MOVO = '212605577990';
 
   var racine = document.getElementById('pg-garde');
+  if (!racine) return;
+  var etat = { pharmacies: [], resultats: null, info: null, trie: false };
 
   function el(tag, cls, texte) {
     var n = document.createElement(tag);
@@ -75,8 +87,39 @@
     return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
   }
 
-  function carte(p) {
-    var li = el('li', 'pg-carte');
+  // Bouton WhatsApp MOVO : livraison depuis cette pharmacie de garde.
+  function lienLivraison(p) {
+    return 'https://wa.me/' + WHATSAPP_MOVO + '?text=' + encodeURIComponent(
+      'Bonjour MOVO, je voudrais me faire livrer un médicament depuis la ' + p.nom + ' (pharmacie de garde, Agadir).');
+  }
+
+  // Partage de la liste du jour sur WhatsApp.
+  function lienPartage(pharmacies, date) {
+    var lignes = ['Pharmacies de garde à Agadir — ' + dateLisible(date) + ' :'];
+    pharmacies.forEach(function (p) { lignes.push('• ' + p.nom + (p.telephone ? ' — ' + p.telephone : '')); });
+    lignes.push('', 'Liste à jour : ' + URL_PAGE);
+    return 'https://wa.me/?text=' + encodeURIComponent(lignes.join('\n'));
+  }
+
+  // Distance à vol d'oiseau (km), calculée sur l'appareil : la position n'est envoyée nulle part.
+  function distanceKm(a, b) {
+    var R = 6371, rad = Math.PI / 180;
+    var dLat = (b.lat - a.lat) * rad, dLng = (b.lng - a.lng) * rad;
+    var h = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return 2 * R * Math.asin(Math.sqrt(h));
+  }
+
+  function formatDistance(km) {
+    return km < 1 ? (Math.round(km * 100) * 10) + ' m' : km.toFixed(1).replace('.', ',') + ' km';
+  }
+
+  function carte(p, rang) {
+    var proche = etat.trie && rang === 0 && p._d != null;
+    var li = el('li', 'pg-carte' + (proche ? ' pg-proche' : ''));
+    if (etat.trie && p._d != null) {
+      li.appendChild(el('p', 'pg-dist', (proche ? 'La plus proche · ' : '') + 'à ' + formatDistance(p._d)));
+    }
     li.appendChild(el('h3', 'pg-nom', p.nom));
     li.appendChild(el('p', 'pg-adr', [p.quartier, p.adresse].filter(Boolean).join(' — ')));
     if (p.garde) li.appendChild(el('p', 'pg-type', 'Garde ' + p.garde));
@@ -91,6 +134,11 @@
     map.target = '_blank';
     map.rel = 'noopener';
     actions.appendChild(map);
+    var livrer = el('a', 'pg-btn pg-btn-livrer', '🛵 Me faire livrer');
+    livrer.href = lienLivraison(p);
+    livrer.target = '_blank';
+    livrer.rel = 'noopener';
+    actions.appendChild(livrer);
     li.appendChild(actions);
     return li;
   }
@@ -102,9 +150,74 @@
     noms.forEach(function (z) {
       if (noms.length > 1) parent.appendChild(el('h3', 'pg-zone', z));
       var ul = el('ul', 'pg-liste');
-      zones[z].forEach(function (p) { ul.appendChild(carte(p)); });
+      zones[z].forEach(function (p, i) { ul.appendChild(carte(p, i)); });
       parent.appendChild(ul);
     });
+  }
+
+  function dessinerListe() {
+    var zone = etat.resultats;
+    zone.textContent = '';
+    if (etat.trie) {
+      var ul = el('ul', 'pg-liste');
+      etat.pharmacies.forEach(function (p, i) { ul.appendChild(carte(p, i)); });
+      zone.appendChild(ul);
+    } else {
+      listeParZone(etat.pharmacies, zone);
+    }
+  }
+
+  function info(texte) {
+    etat.info.textContent = texte;
+    etat.info.hidden = false;
+  }
+
+  function plusProche() {
+    if (!navigator.geolocation) {
+      info('La localisation n\'est pas disponible sur cet appareil : choisissez dans la liste ci-dessous.');
+      return;
+    }
+    info('Recherche de votre position…');
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      var ici = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      etat.pharmacies.forEach(function (p) {
+        p._d = (p.lat != null && p.lng != null) ? distanceKm(ici, p) : null;
+      });
+      etat.pharmacies.sort(function (a, b) {
+        if (a._d == null && b._d == null) return 0;
+        if (a._d == null) return 1;
+        if (b._d == null) return -1;
+        return a._d - b._d;
+      });
+      etat.trie = true;
+      info('Liste triée de la plus proche à la plus éloignée (distance à vol d\'oiseau). Votre position reste sur votre appareil.');
+      dessinerListe();
+    }, function () {
+      info('Position non disponible : autorisez la localisation dans votre navigateur, ou choisissez dans la liste ci-dessous.');
+    }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+  }
+
+  function outils(pharmacies, date) {
+    var barre = el('div', 'pg-outils');
+    var proche = el('button', 'pg-btn pg-btn-proche', '📍 La plus proche de moi');
+    proche.type = 'button';
+    proche.addEventListener('click', plusProche);
+    barre.appendChild(proche);
+    var partage = el('a', 'pg-btn pg-btn-wa', 'Envoyer la liste sur WhatsApp');
+    partage.href = lienPartage(pharmacies, date);
+    partage.target = '_blank';
+    partage.rel = 'noopener';
+    barre.appendChild(partage);
+    racine.appendChild(barre);
+    etat.info = el('p', 'pg-info');
+    etat.info.hidden = true;
+    racine.appendChild(etat.info);
+  }
+
+  // Titre H1 de la page avec la date du jour (seulement sur cette page : le script est dans son contenu).
+  function titreDuJour(date) {
+    var h1 = document.querySelector('.entry-head h1') || document.querySelector('article h1');
+    if (h1) h1.textContent = 'Pharmacie de garde Agadir aujourd\'hui (24h/24) — ' + dateLisible(date);
   }
 
   function afficher(data) {
@@ -125,33 +238,43 @@
 
     var liste = parDate[aujourdhui];
     var hier = parDate[addDays(aujourdhui, -1)];
+    var affichee = null, dateAffichee = aujourdhui;
     if ((!liste || !liste.length) && hier && hier.length) {
       racine.appendChild(el('p', 'pg-alerte',
         'La liste d\'aujourd\'hui n\'est pas encore publiée : voici la garde d\'hier (' + dateLisible(addDays(aujourdhui, -1)) +
         '), souvent encore valable le matin. Appelez la pharmacie avant de vous déplacer.'));
-      listeParZone(hier, racine);
+      affichee = hier;
+      dateAffichee = addDays(aujourdhui, -1);
     } else if (!liste || !liste.length) {
       racine.appendChild(el('p', 'pg-alerte',
         'La liste de garde d\'aujourd\'hui n\'est pas encore mise à jour. Vérifiez sur agadir.pharmacieenpermanence.ma ou appelez le 141 (SAMU) en cas d\'urgence.'));
     } else {
-      listeParZone(liste, racine);
+      affichee = liste;
     }
 
-    var demain = parDate[addDays(aujourdhui, 1)];
-    if (false && demain && demain.length) {
-      var det = el('details', 'pg-demain');
-      det.appendChild(el('summary', null, 'Garde suivante (' + dateLisible(addDays(aujourdhui, 1)) + ')'));
-      listeParZone(demain, det);
-      racine.appendChild(det);
+    if (affichee) {
+      etat.pharmacies = affichee.map(function (p) { var c = {}; for (var k in p) c[k] = p[k]; return c; });
+      etat.trie = false;
+      outils(etat.pharmacies, dateAffichee);
+      etat.resultats = el('div', 'pg-resultats');
+      racine.appendChild(etat.resultats);
+      dessinerListe();
     }
 
     racine.appendChild(el('p', 'pg-maj',
       'D\'après Pharmacie en permanence et Annuaire Gratuit. Mis à jour le ' + new Date(data.genere_le).toLocaleString('fr-FR', { timeZone: data.fuseau }) +
       '. Appelez la pharmacie avant de vous déplacer.'));
     racine.appendChild(el('p', 'pg-urgence', 'Urgences : SAMU 141 · Protection civile 150 · Police 19'));
+    titreDuJour(aujourdhui);
   }
 
+  // En cas d'échec du chargement, on garde la liste statique publiée dans la page (si elle existe).
   function erreur() {
+    if (racine.querySelector('.pg-carte')) {
+      var b = racine.querySelector('.pg-btn-proche');
+      if (b) b.hidden = true;
+      return;
+    }
     racine.textContent = '';
     racine.appendChild(el('p', 'pg-alerte',
       'Impossible de charger la liste des pharmacies de garde. Réessayez plus tard ou appelez le 141 en cas d\'urgence.'));
