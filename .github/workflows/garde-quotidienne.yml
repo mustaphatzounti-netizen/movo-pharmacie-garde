@@ -50,6 +50,12 @@ jobs:
           BING_API_KEY: ${{ secrets.BING_API_KEY }}
         run: node scripts/publish-to-blogger.mjs
 
+      - name: Signaler à Bing les nouveaux articles et pages (FR, EN, AR)
+        continue-on-error: true
+        env:
+          BING_API_KEY: ${{ secrets.BING_API_KEY }}
+        run: node scripts/bing-nouveautes.mjs
+
       - name: Commit et push
         run: |
           git config user.name "github-actions[bot]"
