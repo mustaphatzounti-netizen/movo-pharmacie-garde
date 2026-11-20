@@ -1,64 +1,15 @@
 {
   "ville": "Aït Melloul",
   "exemple": false,
-  "genere_le": "2026-11-19T05:00:36.170Z",
+  "genere_le": "2026-11-20T05:00:34.987Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
-  "aujourdhui": "2026-11-19",
+  "aujourdhui": "2026-11-20",
   "sources": [
     "https://www.telecontact.ma/pharmacie-de-garde-zone/ait-melloul/autre.html",
     "https://www.annuaire-gratuit.ma/pharmacie-garde-ait-melloul.html"
   ],
   "jours": [
-    {
-      "date": "2026-11-17",
-      "pharmacies": [
-        {
-          "id": "chouhada",
-          "nom": "Pharmacie Chouhada",
-          "zone": "Aït Melloul",
-          "quartier": "",
-          "adresse": "Lotissement Aït Saïd lot 423, Aït Melloul",
-          "telephone": "+212528242044",
-          "garde": "Jour",
-          "lat": 30.350467,
-          "lng": -9.493033
-        },
-        {
-          "id": "essaada",
-          "nom": "Pharmacie Essaada",
-          "zone": "Aït Melloul",
-          "quartier": "",
-          "adresse": "lot. Admine n° A/8, Aït Melloul",
-          "telephone": "+212528308250",
-          "garde": "Jour",
-          "lat": 30.342917,
-          "lng": -9.484017
-        },
-        {
-          "id": "ifoulki",
-          "nom": "Pharmacie Ifoulki",
-          "zone": "Aït Melloul",
-          "quartier": "",
-          "adresse": "Barmat 1 lotiss . Ifoulki lot. n°7 Tamazart, Aït Melloul",
-          "telephone": "+212528245376",
-          "garde": "Jour",
-          "lat": 30.343853,
-          "lng": -9.517155
-        },
-        {
-          "id": "kanissi",
-          "nom": "Pharmacie kanissi",
-          "zone": "Aït Melloul",
-          "quartier": "",
-          "adresse": "bd Mokhtar Soussi - Autre ville résid.Tamazart n°185, Aït Melloul",
-          "telephone": "+212528241094",
-          "garde": "Jour",
-          "lat": null,
-          "lng": null
-        }
-      ]
-    },
     {
       "date": "2026-11-18",
       "pharmacies": [
@@ -110,6 +61,55 @@
     },
     {
       "date": "2026-11-19",
+      "pharmacies": [
+        {
+          "id": "chouhada",
+          "nom": "Pharmacie Chouhada",
+          "zone": "Aït Melloul",
+          "quartier": "",
+          "adresse": "Lotissement Aït Saïd lot 423, Aït Melloul",
+          "telephone": "+212528242044",
+          "garde": "Jour",
+          "lat": 30.350467,
+          "lng": -9.493033
+        },
+        {
+          "id": "essaada",
+          "nom": "Pharmacie Essaada",
+          "zone": "Aït Melloul",
+          "quartier": "",
+          "adresse": "lot. Admine n° A/8, Aït Melloul",
+          "telephone": "+212528308250",
+          "garde": "Jour",
+          "lat": 30.342917,
+          "lng": -9.484017
+        },
+        {
+          "id": "ifoulki",
+          "nom": "Pharmacie Ifoulki",
+          "zone": "Aït Melloul",
+          "quartier": "",
+          "adresse": "Barmat 1 lotiss . Ifoulki lot. n°7 Tamazart, Aït Melloul",
+          "telephone": "+212528245376",
+          "garde": "Jour",
+          "lat": 30.343853,
+          "lng": -9.517155
+        },
+        {
+          "id": "kanissi",
+          "nom": "Pharmacie kanissi",
+          "zone": "Aït Melloul",
+          "quartier": "",
+          "adresse": "bd Mokhtar Soussi - Autre ville résid.Tamazart n°185, Aït Melloul",
+          "telephone": "+212528241094",
+          "garde": "Jour",
+          "lat": null,
+          "lng": null
+        }
+      ]
+    },
+    {
+      "date": "2026-11-20",
       "pharmacies": [
         {
           "id": "chouhada",
