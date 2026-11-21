@@ -1,64 +1,15 @@
 {
   "ville": "Inezgane",
   "exemple": false,
-  "genere_le": "2026-11-20T05:00:34.156Z",
+  "genere_le": "2026-11-21T05:00:34.850Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
-  "aujourdhui": "2026-11-20",
+  "aujourdhui": "2026-11-21",
   "sources": [
     "https://www.telecontact.ma/pharmacie-de-garde-zone/inezgane/autre.html",
     "https://www.annuaire-gratuit.ma/pharmacie-garde-inezgane.html"
   ],
   "jours": [
-    {
-      "date": "2026-11-18",
-      "pharmacies": [
-        {
-          "id": "annour",
-          "nom": "Pharmacie Annour",
-          "zone": "Inezgane",
-          "quartier": "",
-          "adresse": "hay Annour rue 1016 n°56, Inezgane",
-          "telephone": "+212528838848",
-          "garde": "Jour",
-          "lat": 30.351645,
-          "lng": -9.557247
-        },
-        {
-          "id": "hopitaux",
-          "nom": "Pharmacie des Hopitaux",
-          "zone": "Inezgane",
-          "quartier": "",
-          "adresse": "Av. Mly Ali Chrif Bounaman, Près De L'hopital D'inezgane",
-          "telephone": "+212528832011",
-          "garde": "Nuit",
-          "lat": 30.3521,
-          "lng": -9.537717
-        },
-        {
-          "id": "essaada",
-          "nom": "Pharmacie Essaâda",
-          "zone": "Inezgane",
-          "quartier": "",
-          "adresse": "109 bd Hassan I, Inezgane",
-          "telephone": "+212528832815",
-          "garde": "Jour",
-          "lat": 30.35525,
-          "lng": -9.521933
-        },
-        {
-          "id": "laprovince",
-          "nom": "Pharmacie la Province",
-          "zone": "Inezgane",
-          "quartier": "",
-          "adresse": "2 av des F.a.r. ang. Mohammed V, Inezgane",
-          "telephone": "+212528832340",
-          "garde": "Jour",
-          "lat": 30.362283,
-          "lng": -9.533767
-        }
-      ]
-    },
     {
       "date": "2026-11-19",
       "pharmacies": [
@@ -110,6 +61,55 @@
     },
     {
       "date": "2026-11-20",
+      "pharmacies": [
+        {
+          "id": "annour",
+          "nom": "Pharmacie Annour",
+          "zone": "Inezgane",
+          "quartier": "",
+          "adresse": "hay Annour rue 1016 n°56, Inezgane",
+          "telephone": "+212528838848",
+          "garde": "Jour",
+          "lat": 30.351645,
+          "lng": -9.557247
+        },
+        {
+          "id": "hopitaux",
+          "nom": "Pharmacie des Hopitaux",
+          "zone": "Inezgane",
+          "quartier": "",
+          "adresse": "Av. Mly Ali Chrif Bounaman, Près De L'hopital D'inezgane",
+          "telephone": "+212528832011",
+          "garde": "Nuit",
+          "lat": 30.3521,
+          "lng": -9.537717
+        },
+        {
+          "id": "essaada",
+          "nom": "Pharmacie Essaâda",
+          "zone": "Inezgane",
+          "quartier": "",
+          "adresse": "109 bd Hassan I, Inezgane",
+          "telephone": "+212528832815",
+          "garde": "Jour",
+          "lat": 30.35525,
+          "lng": -9.521933
+        },
+        {
+          "id": "laprovince",
+          "nom": "Pharmacie la Province",
+          "zone": "Inezgane",
+          "quartier": "",
+          "adresse": "2 av des F.a.r. ang. Mohammed V, Inezgane",
+          "telephone": "+212528832340",
+          "garde": "Jour",
+          "lat": 30.362283,
+          "lng": -9.533767
+        }
+      ]
+    },
+    {
+      "date": "2026-11-21",
       "pharmacies": [
         {
           "id": "annour",
