@@ -28,6 +28,7 @@
  */
 
 import fs from 'node:fs';
+import { titreDuJour } from './titre-du-jour.mjs';
 
 const BLOGGER_BLOG_ID = '8452204387409245713';   // MOVO (FR) blog — do not change
 const BLOGGER_PAGE_ID = '8499368874513364589';    // /p/pharmacie-de-garde-agadir.html — do not change
@@ -594,7 +595,7 @@ function splice(html, startMarker, endMarker, inner) {
   return html.slice(0, si + startMarker.length) + inner + html.slice(ei);
 }
 
-async function publishPage(token, { label, blogId, pageId, fallbackTitle, innerHtml, ldHtml }) {
+async function publishPage(token, { label, blogId, pageId, fallbackTitle, title, innerHtml, ldHtml }) {
   const api = `https://www.googleapis.com/blogger/v3/blogs/${blogId}/pages/${pageId}`;
 
   const getRes = await fetch(api, { headers: { Authorization: `Bearer ${token}` } });
@@ -616,7 +617,10 @@ async function publishPage(token, { label, blogId, pageId, fallbackTitle, innerH
     else newHtml = withLd;
   }
 
-  if (newHtml === html) {
+  // Dated title when one is given (see titreDuJour), otherwise keep the current title.
+  const newTitle = (title && title.trim()) || (page.title && page.title.trim()) || fallbackTitle;
+
+  if (newHtml === html && newTitle === page.title) {
     console.log(`[${label}] No change since last run — skipping Blogger update.`);
     return false;
   }
@@ -627,7 +631,7 @@ async function publishPage(token, { label, blogId, pageId, fallbackTitle, innerH
   const patchRes = await fetch(api, {
     method: 'PATCH',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title: (page.title && page.title.trim()) || fallbackTitle, content: newHtml }),
+    body: JSON.stringify({ title: newTitle, content: newHtml }),
   });
   if (!patchRes.ok) throw new Error(`PATCH page failed (${patchRes.status}): ${await patchRes.text()}`);
 
@@ -666,9 +670,14 @@ async function main() {
   const token = await getAccessToken();
 
   // Each page is published independently: a failure on one does not block the other.
+  const jour = listeDuJour(data);
   const targets = [
-    { label: 'FR', url: FR_PAGE_URL, blogId: BLOGGER_BLOG_ID, pageId: BLOGGER_PAGE_ID, fallbackTitle: FR_PAGE_TITLE, innerHtml: render(data), ldHtml: renderLd(data) },
-    { label: 'AR', url: AR_PAGE_URL, blogId: AR_BLOG_ID, pageId: AR_PAGE_ID, fallbackTitle: AR_PAGE_TITLE, innerHtml: renderAr(data), ldHtml: renderLdAr(data) },
+    { label: 'FR', url: FR_PAGE_URL, blogId: BLOGGER_BLOG_ID, pageId: BLOGGER_PAGE_ID, fallbackTitle: FR_PAGE_TITLE,
+      title: titreDuJour(jour, (d) => `Pharmacie de garde Agadir aujourd'hui (${dateLisible(d)}) | MOVO`, FR_PAGE_TITLE),
+      innerHtml: render(data), ldHtml: renderLd(data) },
+    { label: 'AR', url: AR_PAGE_URL, blogId: AR_BLOG_ID, pageId: AR_PAGE_ID, fallbackTitle: AR_PAGE_TITLE,
+      title: titreDuJour(jour, (d) => `صيدلية الحراسة أكادير اليوم (${dateLisibleAr(d)}) | MOVO`, AR_PAGE_TITLE),
+      innerHtml: renderAr(data), ldHtml: renderLdAr(data) },
     { label: 'EN', url: EN_PAGE_URL, blogId: EN_BLOG_ID, pageId: EN_PAGE_ID, fallbackTitle: EN_PAGE_TITLE, innerHtml: renderEn(data), ldHtml: renderLdEn(data) },
   ];
 
@@ -678,6 +687,7 @@ async function main() {
     const dv = JSON.parse(fs.readFileSync(v.jsonPath, 'utf8'));
     targets.push({
       label: v.label, url: v.cfg.url, blogId: BLOGGER_BLOG_ID, pageId: v.pageId, fallbackTitle: v.fallbackTitle,
+      title: titreDuJour(listeDuJour(dv), (d) => `Pharmacie de garde ${v.cfg.ville} aujourd'hui (${dateLisible(d)}) | MOVO`, v.fallbackTitle),
       innerHtml: render(dv, v.cfg), ldHtml: renderLd(dv, v.cfg),
     });
   }
