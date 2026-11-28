@@ -1,64 +1,15 @@
 {
   "ville": "Inezgane",
   "exemple": false,
-  "genere_le": "2026-11-27T05:30:33.750Z",
+  "genere_le": "2026-11-28T05:00:41.395Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
-  "aujourdhui": "2026-11-27",
+  "aujourdhui": "2026-11-28",
   "sources": [
     "https://www.telecontact.ma/pharmacie-de-garde-zone/inezgane/autre.html",
     "https://www.annuaire-gratuit.ma/pharmacie-garde-inezgane.html"
   ],
   "jours": [
-    {
-      "date": "2026-11-25",
-      "pharmacies": [
-        {
-          "id": "alwafa",
-          "nom": "Pharmacie AlWafa",
-          "zone": "Inezgane",
-          "quartier": "",
-          "adresse": "rte. principale Tarrast, Inezgane",
-          "telephone": "+212528835032",
-          "garde": "Nuit",
-          "lat": 30.352183,
-          "lng": -9.550433
-        },
-        {
-          "id": "sud",
-          "nom": "Pharmacie du sud",
-          "zone": "Inezgane",
-          "quartier": "",
-          "adresse": "105 rue des écoles, Inezgane",
-          "telephone": "+212528832332",
-          "garde": "Jour",
-          "lat": 30.358383,
-          "lng": -9.535517
-        },
-        {
-          "id": "hader",
-          "nom": "Pharmacie Hader",
-          "zone": "Inezgane",
-          "quartier": "",
-          "adresse": "lot. Rmel 2 n° E13 Tarrast, Inezgane",
-          "telephone": "+212528837650",
-          "garde": "Jour",
-          "lat": 30.35847,
-          "lng": -9.549671
-        },
-        {
-          "id": "masdoura",
-          "nom": "Pharmacie Masdoura",
-          "zone": "Inezgane",
-          "quartier": "",
-          "adresse": "rue 507 n°5 Bouzgar Mesdoura, Inezgane",
-          "telephone": "+212528335044",
-          "garde": "Jour",
-          "lat": 30.349833,
-          "lng": -9.5403
-        }
-      ]
-    },
     {
       "date": "2026-11-26",
       "pharmacies": [
@@ -110,6 +61,55 @@
     },
     {
       "date": "2026-11-27",
+      "pharmacies": [
+        {
+          "id": "alwafa",
+          "nom": "Pharmacie AlWafa",
+          "zone": "Inezgane",
+          "quartier": "",
+          "adresse": "rte. principale Tarrast, Inezgane",
+          "telephone": "+212528835032",
+          "garde": "Nuit",
+          "lat": 30.352183,
+          "lng": -9.550433
+        },
+        {
+          "id": "sud",
+          "nom": "Pharmacie du sud",
+          "zone": "Inezgane",
+          "quartier": "",
+          "adresse": "105 rue des écoles, Inezgane",
+          "telephone": "+212528832332",
+          "garde": "Jour",
+          "lat": 30.358383,
+          "lng": -9.535517
+        },
+        {
+          "id": "hader",
+          "nom": "Pharmacie Hader",
+          "zone": "Inezgane",
+          "quartier": "",
+          "adresse": "lot. Rmel 2 n° E13 Tarrast, Inezgane",
+          "telephone": "+212528837650",
+          "garde": "Jour",
+          "lat": 30.35847,
+          "lng": -9.549671
+        },
+        {
+          "id": "masdoura",
+          "nom": "Pharmacie Masdoura",
+          "zone": "Inezgane",
+          "quartier": "",
+          "adresse": "rue 507 n°5 Bouzgar Mesdoura, Inezgane",
+          "telephone": "+212528335044",
+          "garde": "Jour",
+          "lat": 30.349833,
+          "lng": -9.5403
+        }
+      ]
+    },
+    {
+      "date": "2026-11-28",
       "pharmacies": [
         {
           "id": "alwafa",

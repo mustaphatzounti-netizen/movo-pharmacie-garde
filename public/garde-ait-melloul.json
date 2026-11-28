@@ -1,64 +1,15 @@
 {
   "ville": "Aït Melloul",
   "exemple": false,
-  "genere_le": "2026-11-27T05:30:34.419Z",
+  "genere_le": "2026-11-28T05:00:42.135Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
-  "aujourdhui": "2026-11-27",
+  "aujourdhui": "2026-11-28",
   "sources": [
     "https://www.telecontact.ma/pharmacie-de-garde-zone/ait-melloul/autre.html",
     "https://www.annuaire-gratuit.ma/pharmacie-garde-ait-melloul.html"
   ],
   "jours": [
-    {
-      "date": "2026-11-25",
-      "pharmacies": [
-        {
-          "id": "alhayat",
-          "nom": "Pharmacie Al Hayat",
-          "zone": "Aït Melloul",
-          "quartier": "",
-          "adresse": "Hay Chouhada bloc 2 n°329, Aït Melloul",
-          "telephone": "+212528247852",
-          "garde": "24h/24",
-          "lat": 30.341867,
-          "lng": -9.486783
-        },
-        {
-          "id": "alhilalalakhdar",
-          "nom": "Pharmacie Alhilal Alakhdar",
-          "zone": "Aït Melloul",
-          "quartier": "",
-          "adresse": "340 rte Biougra, Aït Melloul",
-          "telephone": "+212528247475",
-          "garde": "24h/24",
-          "lat": 30.342133,
-          "lng": -9.4972
-        },
-        {
-          "id": "latlas",
-          "nom": "Pharmacie de l'Atlas",
-          "zone": "Aït Melloul",
-          "quartier": "",
-          "adresse": "26 Avenue de la Marche Verte, Aït Melloul",
-          "telephone": "+212528241987",
-          "garde": "24h/24",
-          "lat": 30.3457,
-          "lng": -9.5028
-        },
-        {
-          "id": "nouri",
-          "nom": "Pharmacie Nouri",
-          "zone": "Aït Melloul",
-          "quartier": "",
-          "adresse": "106 bd Hassan II rte de Tiznit, Aït Melloul",
-          "telephone": "+212528243636",
-          "garde": "24h/24",
-          "lat": 30.337417,
-          "lng": -9.504183
-        }
-      ]
-    },
     {
       "date": "2026-11-26",
       "pharmacies": [
@@ -110,6 +61,55 @@
     },
     {
       "date": "2026-11-27",
+      "pharmacies": [
+        {
+          "id": "alhayat",
+          "nom": "Pharmacie Al Hayat",
+          "zone": "Aït Melloul",
+          "quartier": "",
+          "adresse": "Hay Chouhada bloc 2 n°329, Aït Melloul",
+          "telephone": "+212528247852",
+          "garde": "24h/24",
+          "lat": 30.341867,
+          "lng": -9.486783
+        },
+        {
+          "id": "alhilalalakhdar",
+          "nom": "Pharmacie Alhilal Alakhdar",
+          "zone": "Aït Melloul",
+          "quartier": "",
+          "adresse": "340 rte Biougra, Aït Melloul",
+          "telephone": "+212528247475",
+          "garde": "24h/24",
+          "lat": 30.342133,
+          "lng": -9.4972
+        },
+        {
+          "id": "latlas",
+          "nom": "Pharmacie de l'Atlas",
+          "zone": "Aït Melloul",
+          "quartier": "",
+          "adresse": "26 Avenue de la Marche Verte, Aït Melloul",
+          "telephone": "+212528241987",
+          "garde": "24h/24",
+          "lat": 30.3457,
+          "lng": -9.5028
+        },
+        {
+          "id": "nouri",
+          "nom": "Pharmacie Nouri",
+          "zone": "Aït Melloul",
+          "quartier": "",
+          "adresse": "106 bd Hassan II rte de Tiznit, Aït Melloul",
+          "telephone": "+212528243636",
+          "garde": "24h/24",
+          "lat": 30.337417,
+          "lng": -9.504183
+        }
+      ]
+    },
+    {
+      "date": "2026-11-28",
       "pharmacies": [
         {
           "id": "alhayat",
