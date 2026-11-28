@@ -1,7 +1,7 @@
 {
   "ville": "Agadir",
   "exemple": false,
-  "genere_le": "2026-11-28T05:00:39.992Z",
+  "genere_le": "2026-11-28T08:30:31.120Z",
   "fuseau": "Africa/Casablanca",
   "heure_bascule": "00:00",
   "aujourdhui": "2026-11-28",
@@ -224,7 +224,7 @@
       "pharmacies": [
         {
           "id": "almouna",
-          "nom": "Pharmacie Al Mouna",
+          "nom": "Pharmacie AlMouna",
           "zone": "Agadir",
           "quartier": "",
           "adresse": "Bd Abderrahim Bouabid, En Face De L'one Et D'hopital Ibis ( Ex Moussafir ), À Coté Du Polyclinique Du Souss",
